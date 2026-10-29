@@ -1,0 +1,17 @@
+{
+  "book.meridian_door_breaker.door_breaker": "Door Breaker",
+  "volume.meridian_door_breaker.upper": "Upper Volume · Wooden Doors",
+  "item.meridian_door_breaker.upper_scroll": "Door Breaker·Upper Volume · Wooden Doors",
+  "volume.meridian_door_breaker.middle": "Middle Volume · Iron Doors",
+  "item.meridian_door_breaker.middle_scroll": "Door Breaker·Middle Volume · Iron Doors",
+  "volume.meridian_door_breaker.lower": "Lower Volume · Myriad Doors",
+  "item.meridian_door_breaker.lower_scroll": "Door Breaker·Lower Volume · Myriad Doors",
+  "technique.meridian_door_breaker.knock": "Knock",
+  "technique.meridian_door_breaker.cleave": "Cleave",
+  "technique.meridian_door_breaker.ram": "Ram",
+  "technique.meridian_door_breaker.hook": "Shield Hook",
+  "technique.meridian_door_breaker.sweep": "Sweep",
+  "technique.meridian_door_breaker.close": "Retreating Guard",
+  "technique.meridian_door_breaker.chain": "Chained Cuts",
+  "technique.meridian_door_breaker.finale": "Myriad Doors"
+}

@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:iron_sword",
+    "minecraft:iron_pickaxe",
+    "minecraft:iron_shovel",
+    "minecraft:iron_hoe",
+    "minecraft:netherite_sword",
+    "minecraft:netherite_pickaxe",
+    "minecraft:netherite_shovel",
+    "minecraft:netherite_hoe"
+  ]
+}

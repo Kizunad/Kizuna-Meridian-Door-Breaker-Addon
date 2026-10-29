@@ -1,0 +1,17 @@
+{
+  "book.meridian_door_breaker.door_breaker": "破门斩",
+  "volume.meridian_door_breaker.upper": "上卷·木门",
+  "item.meridian_door_breaker.upper_scroll": "破门斩·上卷·木门",
+  "volume.meridian_door_breaker.middle": "中卷·铁门",
+  "item.meridian_door_breaker.middle_scroll": "破门斩·中卷·铁门",
+  "volume.meridian_door_breaker.lower": "下卷·万门",
+  "item.meridian_door_breaker.lower_scroll": "破门斩·下卷·万门",
+  "technique.meridian_door_breaker.knock": "叩门",
+  "technique.meridian_door_breaker.cleave": "破门",
+  "technique.meridian_door_breaker.ram": "撞门",
+  "technique.meridian_door_breaker.hook": "破盾",
+  "technique.meridian_door_breaker.sweep": "横扫",
+  "technique.meridian_door_breaker.close": "掩门",
+  "technique.meridian_door_breaker.chain": "连门",
+  "technique.meridian_door_breaker.finale": "万门一斩"
+}

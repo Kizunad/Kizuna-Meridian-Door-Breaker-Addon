@@ -1,0 +1,735 @@
+# 功法目录清单，schema_version 同时标识清单格式。
+schema_version: 1
+namespace: "meridian_door_breaker"
+binding_templates { id: "human:adult" version: 1 }
+
+books {
+  id: "meridian_door_breaker:door_breaker"
+  display_name: "破门斩"
+  held_item_rules {
+    categories {
+      id: "axes"
+      item_tags: "meridian_door_breaker:axes"
+      selection_priority: 0
+      base_damage_source: ITEM_ATTACK_DAMAGE
+      base_damage { value: 1 unit: RATIO }
+      injury_kind: CUTTING
+      shield_interaction: BREAK_BEFORE_HIT
+      can_break_doors: true
+    }
+    categories {
+      id: "edged_melee_tools"
+      item_tags: "meridian_door_breaker:edged"
+      selection_priority: 1
+      base_damage_source: ITEM_ATTACK_DAMAGE
+      base_damage { value: 0.8 unit: RATIO }
+      injury_kind: CUTTING
+      shield_interaction: COOLDOWN_AFTER_BLOCK
+      can_break_doors: true
+    }
+    categories {
+      id: "melee_tools"
+      item_tags: "meridian_door_breaker:melee_tools"
+      selection_priority: 1
+      base_damage_source: ITEM_ATTACK_DAMAGE
+      base_damage { value: 0.8 unit: RATIO }
+      injury_kind: BLUNT
+      shield_interaction: COOLDOWN_AFTER_BLOCK
+      can_break_doors: true
+    }
+    categories {
+      id: "handheld_misc"
+      item_tags: "meridian_door_breaker:handheld_misc"
+      selection_priority: 4
+      base_damage_source: FIXED_DAMAGE
+      base_damage { value: 0.5 unit: DAMAGE_POINT }
+      injury_kind: BLUNT
+      shield_interaction: NO_SHIELD_BREAK
+      can_break_doors: false
+    }
+    categories {
+      id: "block_items"
+      item_tags: "meridian_door_breaker:block_items"
+      selection_priority: 3
+      base_damage_source: FIXED_DAMAGE
+      base_damage { value: 1 unit: DAMAGE_POINT }
+      injury_kind: BLUNT
+      shield_interaction: NO_SHIELD_BREAK
+      can_break_doors: false
+    }
+    categories {
+      id: "other_items"
+      selection_priority: 4
+      base_damage_source: FIXED_DAMAGE
+      base_damage { value: 0.5 unit: DAMAGE_POINT }
+      injury_kind: BLUNT
+      shield_interaction: NO_SHIELD_BREAK
+      can_break_doors: false
+    }
+    durability {
+      item_tags: "meridian_door_breaker:iron_axes"
+      multiplier { value: 1 unit: RATIO }
+    }
+    durability {
+      item_tags: "meridian_door_breaker:axes"
+      multiplier { value: 2 unit: RATIO }
+    }
+    durability {
+      item_tags: "meridian_door_breaker:durable_tools"
+      multiplier { value: 2 unit: RATIO }
+    }
+    durability { multiplier { value: 3 unit: RATIO } }
+    selection_order: CATEGORY_PRIORITY
+    selection_order: DURABILITY_MULTIPLIER
+    selection_order: PREFER_MAIN_HAND
+  }
+}
+
+volumes {
+  id: "meridian_door_breaker:upper"
+  book_id: "meridian_door_breaker:door_breaker"
+  display_name: "破门斩·上卷·木门"
+  techniques { id: "meridian_door_breaker:knock" version: 1 }
+  techniques { id: "meridian_door_breaker:cleave" version: 1 }
+  techniques { id: "meridian_door_breaker:ram" version: 1 }
+}
+volumes {
+  id: "meridian_door_breaker:middle"
+  book_id: "meridian_door_breaker:door_breaker"
+  display_name: "破门斩·中卷·铁门"
+  techniques { id: "meridian_door_breaker:hook" version: 1 }
+  techniques { id: "meridian_door_breaker:sweep" version: 1 }
+  techniques { id: "meridian_door_breaker:close" version: 1 }
+  prerequisite_volume_ids: "meridian_door_breaker:upper"
+}
+volumes {
+  id: "meridian_door_breaker:lower"
+  book_id: "meridian_door_breaker:door_breaker"
+  display_name: "破门斩·下卷·万门"
+  techniques { id: "meridian_door_breaker:chain" version: 1 }
+  techniques { id: "meridian_door_breaker:finale" version: 1 }
+  prerequisite_volume_ids: "meridian_door_breaker:middle"
+}
+
+definitions {
+  id: "meridian_door_breaker:knock"
+  version: 1
+  ai_hints {
+    minimum_distance { value: 0 unit: METER }
+    maximum_distance { value: 3 unit: METER }
+    maximum_hp_ratio { value: 1 unit: RATIO }
+    minimum_qi_ratio { value: 0 unit: RATIO }
+    category_weight { value: 1 unit: RATIO }
+    combat { maximum_warmup_under_attack_millis: 2500 }
+  }
+  category: ATTACK
+  minimum_realm: WANDERING_QI
+  slots {
+    id: "hand_meridians"
+    module: MERIDIAN
+    tags: "human:hand_meridian"
+    minimum_count: 1
+    maximum_count: 6
+    require_opened: true
+  }
+  cost {
+    qi {
+      slot_id: "hand_meridians"
+      matching: ANY_ATTRIBUTE_AT_LEAST_PHASE
+      phase: FREE
+      amount { value: 3 unit: QI }
+      distribution: EVEN
+    }
+  }
+  phases { warmup_millis: 900 active_millis: 800 recovery_millis: 1300 interruptible_by_damage: false }
+  cooldown_millis: 1000
+  effects {
+    at_millis: 0
+    presentation {
+      id: "meridian_door_breaker:door_breaker_knock"
+      duration: UNTIL_RECOVERY_END
+      start_millis: 0
+    }
+  }
+  effects {
+    at_millis: 900
+    weapon_strike {
+      shape: SINGLE_TARGET
+      distance { value: 3 unit: METER }
+      angle { value: 60 unit: DEGREE }
+      facing_offset { value: 0 unit: DEGREE }
+      multiplier { value: 0.3 unit: RATIO }
+      maximum_targets: 1
+      cast_target_limit: 1
+      knockback { value: 0 unit: RATIO }
+      can_two_hand: false
+      two_hand_multiplier { value: 1 unit: RATIO }
+      break_shield: false
+      injury_override: BLUNT
+      last_strike: false
+      durability_base: 1
+      shield_cooldown_millis: 0
+      shield_break_millis: 0
+      dedup_group: "knock_1"
+    }
+  }
+  effects {
+    at_millis: 1250
+    weapon_strike {
+      shape: SINGLE_TARGET
+      distance { value: 3 unit: METER }
+      angle { value: 60 unit: DEGREE }
+      facing_offset { value: 0 unit: DEGREE }
+      multiplier { value: 0.3 unit: RATIO }
+      maximum_targets: 1
+      cast_target_limit: 1
+      knockback { value: 0 unit: RATIO }
+      can_two_hand: false
+      two_hand_multiplier { value: 1 unit: RATIO }
+      break_shield: false
+      injury_override: BLUNT
+      last_strike: false
+      durability_base: 1
+      shield_cooldown_millis: 0
+      shield_break_millis: 0
+      dedup_group: "knock_2"
+    }
+  }
+  effects {
+    at_millis: 1700
+    weapon_strike {
+      shape: SINGLE_TARGET
+      distance { value: 3 unit: METER }
+      angle { value: 60 unit: DEGREE }
+      facing_offset { value: 0 unit: DEGREE }
+      multiplier { value: 0.9 unit: RATIO }
+      maximum_targets: 1
+      cast_target_limit: 1
+      knockback { value: 0 unit: RATIO }
+      can_two_hand: false
+      two_hand_multiplier { value: 1 unit: RATIO }
+      break_shield: false
+      injury_override: BLUNT
+      last_strike: true
+      durability_base: 1
+      shield_cooldown_millis: 0
+      shield_break_millis: 0
+      dedup_group: "knock_3"
+    }
+  }
+  presentation {
+    icon_id: "meridian_door_breaker:knock"
+    display_name: "叩门"
+    description: "竖起手中器物，向面前的单个敌人连敲三下，前两下轻、末一下重，造成钝击。保持靠近并朝向目标使用，可衔接撞门后的收势。"
+  }
+  movement_speed_multiplier: 0.4
+  follow_up {
+    transitions {
+      previous { id: "meridian_door_breaker:ram" version: 1 }
+      recovery_start_ratio { value: 0.5 unit: RATIO }
+      after_recovery_millis: 500
+      start_millis: 300
+    }
+  }
+}
+
+definitions {
+  id: "meridian_door_breaker:cleave"
+  version: 1
+  ai_hints {
+    minimum_distance { value: 0 unit: METER }
+    maximum_distance { value: 3 unit: METER }
+    maximum_hp_ratio { value: 1 unit: RATIO }
+    minimum_qi_ratio { value: 0 unit: RATIO }
+    category_weight { value: 1.2 unit: RATIO }
+    combat {
+      maximum_warmup_under_attack_millis: 2500
+      long_warmup_millis: 3000
+      maximum_long_warmup_distance { value: 2.5 unit: METER }
+    }
+  }
+  category: ATTACK
+  minimum_realm: WANDERING_QI
+  slots {
+    id: "hand_meridians"
+    module: MERIDIAN
+    tags: "human:hand_meridian"
+    minimum_count: 1
+    maximum_count: 6
+    require_opened: true
+  }
+  cost {
+    qi {
+      slot_id: "hand_meridians"
+      matching: ANY_ATTRIBUTE_AT_LEAST_PHASE
+      phase: FREE
+      amount { value: 8 unit: QI }
+      distribution: EVEN
+    }
+  }
+  phases { warmup_millis: 3200 active_millis: 0 recovery_millis: 2800 interruptible_by_damage: true }
+  cooldown_millis: 4000
+  effects {
+    at_millis: 0
+    presentation { id: "meridian_door_breaker:door_breaker_cleave" duration: UNTIL_RECOVERY_END start_millis: 0 }
+  }
+  effects {
+    at_millis: 3200
+    weapon_strike {
+      shape: SINGLE_TARGET distance { value: 3 unit: METER }
+      angle { value: 60 unit: DEGREE } facing_offset { value: 0 unit: DEGREE }
+      multiplier { value: 2.5 unit: RATIO } maximum_targets: 1 cast_target_limit: 1
+      knockback { value: 0 unit: RATIO } can_two_hand: true two_hand_multiplier { value: 1.2 unit: RATIO }
+      break_shield: false last_strike: true durability_base: 3
+      shield_cooldown_millis: 0 shield_break_millis: 0 dedup_group: "cleave"
+    }
+  }
+  effects {
+    at_millis: 3200
+    break_blocks {
+      forward_distance { value: 2 unit: METER } width { value: 1 unit: METER }
+      block_tags: "meridian_door_breaker:breakable_doors" maximum_doors: 2
+    }
+  }
+  presentation {
+    icon_id: "meridian_door_breaker:cleave"
+    display_name: "破门"
+    description: "举起手中器物向前正劈，可伤敌；持斧或近战工具时还能劈开木门。朝向门扇使用，铁门不受影响。"
+  }
+  movement_speed_multiplier: 0.4
+  follow_up {
+    transitions {
+      previous { id: "meridian_door_breaker:knock" version: 1 }
+      recovery_start_ratio { value: 0.5 unit: RATIO }
+      after_recovery_millis: 500 start_millis: 400
+    }
+  }
+}
+
+definitions {
+  id: "meridian_door_breaker:ram"
+  version: 1
+  ai_hints {
+    minimum_distance { value: 0 unit: METER }
+    maximum_distance { value: 6 unit: METER }
+    maximum_hp_ratio { value: 1 unit: RATIO }
+    minimum_qi_ratio { value: 0 unit: RATIO }
+    category_weight { value: 1 unit: RATIO }
+    combat { maximum_warmup_under_attack_millis: 2500 }
+  }
+  category: ATTACK
+  minimum_realm: WANDERING_QI
+  slots {
+    id: "hand_meridians" module: MERIDIAN tags: "human:hand_meridian"
+    minimum_count: 1 maximum_count: 6 require_opened: true
+  }
+  slots {
+    id: "leg_muscles" module: TISSUE tags: "human:leg_muscle"
+    minimum_count: 4 maximum_count: 4 minimum_strength { value: 510 unit: NEWTON }
+  }
+  cost {
+    qi {
+      slot_id: "hand_meridians"
+      matching: ANY_ATTRIBUTE_AT_LEAST_PHASE
+      phase: FREE
+      amount { value: 8 unit: QI }
+      distribution: EVEN
+    }
+    work {
+      slot_id: "leg_muscles" force { value: 0 unit: NEWTON }
+      power { value: 150 unit: WATT } duration { value: 0.9 unit: SECOND }
+    }
+  }
+  phases { warmup_millis: 1550 active_millis: 850 recovery_millis: 2600 interruptible_by_damage: false }
+  cooldown_millis: 4000
+  effects { at_millis: 0 presentation { id: "meridian_door_breaker:door_breaker_ram" duration: UNTIL_RECOVERY_END start_millis: 0 } }
+  effects { at_millis: 1550 impulse { direction: TOWARD_TARGET speed { value: 3 unit: METERS_PER_SECOND } } }
+  effects { at_millis: 1800 impulse { direction: TOWARD_TARGET speed { value: 3 unit: METERS_PER_SECOND } } }
+  effects { at_millis: 2050 impulse { direction: TOWARD_TARGET speed { value: 3 unit: METERS_PER_SECOND } } }
+  effects {
+    at_millis: 2400
+    weapon_strike {
+      shape: SINGLE_TARGET distance { value: 3 unit: METER } angle { value: 60 unit: DEGREE }
+      facing_offset { value: 0 unit: DEGREE } multiplier { value: 1.8 unit: RATIO }
+      maximum_targets: 1 cast_target_limit: 1 knockback { value: 1 unit: RATIO }
+      can_two_hand: false two_hand_multiplier { value: 1 unit: RATIO } break_shield: false
+      last_strike: true durability_base: 2 shield_cooldown_millis: 0 shield_break_millis: 0 dedup_group: "ram"
+    }
+  }
+  presentation {
+    icon_id: "meridian_door_breaker:ram"
+    display_name: "撞门"
+    description: "向目标连续冲身，随后以手中器物撞击并击退敌人。适合追近目标，可接在掩门之后。"
+  }
+  movement_speed_multiplier: 0.4
+  follow_up {
+    transitions {
+      previous { id: "meridian_door_breaker:close" version: 1 }
+      recovery_start_ratio { value: 0.5 unit: RATIO }
+      after_recovery_millis: 500 start_millis: 400
+    }
+  }
+}
+
+definitions {
+  id: "meridian_door_breaker:hook"
+  version: 1
+  ai_hints {
+    minimum_distance { value: 0 unit: METER }
+    maximum_distance { value: 3 unit: METER }
+    maximum_hp_ratio { value: 1 unit: RATIO }
+    minimum_qi_ratio { value: 0 unit: RATIO }
+    category_weight { value: 1 unit: RATIO }
+    combat {
+      target_shielding_weight { value: 10 unit: RATIO }
+      maximum_warmup_under_attack_millis: 2500
+    }
+  }
+  category: ATTACK
+  minimum_realm: WANDERING_QI
+  slots {
+    id: "hand_meridians" module: MERIDIAN tags: "human:hand_meridian"
+    minimum_count: 2 maximum_count: 6 require_opened: true
+  }
+  cost {
+    qi {
+      slot_id: "hand_meridians"
+      matching: ANY_ATTRIBUTE_AT_LEAST_PHASE
+      phase: FREE
+      amount { value: 8 unit: QI }
+      distribution: EVEN
+    }
+  }
+  phases { warmup_millis: 2050 active_millis: 0 recovery_millis: 2450 interruptible_by_damage: false }
+  cooldown_millis: 5000
+  effects { at_millis: 0 presentation { id: "meridian_door_breaker:door_breaker_hook" duration: UNTIL_RECOVERY_END start_millis: 0 } }
+  effects {
+    at_millis: 2050
+    weapon_strike {
+      shape: SINGLE_TARGET distance { value: 3 unit: METER } angle { value: 60 unit: DEGREE }
+      facing_offset { value: 0 unit: DEGREE } multiplier { value: 1.2 unit: RATIO }
+      maximum_targets: 1 cast_target_limit: 1 knockback { value: 0 unit: RATIO }
+      can_two_hand: false two_hand_multiplier { value: 1 unit: RATIO } break_shield: true
+      last_strike: true durability_base: 2 shield_cooldown_millis: 2000 shield_break_millis: 5000 dedup_group: "hook"
+    }
+  }
+  presentation {
+    icon_id: "meridian_door_breaker:hook"
+    display_name: "破盾"
+    description: "向面前敌人的盾侧钩拽，按所持器物的类别处理破盾。持斧对付举盾敌人更有利，可衔接叩门。"
+  }
+  movement_speed_multiplier: 0.4
+  follow_up {
+    transitions {
+      previous { id: "meridian_door_breaker:knock" version: 1 }
+      recovery_start_ratio { value: 0.5 unit: RATIO }
+      after_recovery_millis: 500 start_millis: 400
+    }
+  }
+}
+
+definitions {
+  id: "meridian_door_breaker:sweep"
+  version: 1
+  ai_hints {
+    minimum_distance { value: 0 unit: METER }
+    maximum_distance { value: 3 unit: METER }
+    maximum_hp_ratio { value: 1 unit: RATIO }
+    minimum_qi_ratio { value: 0 unit: RATIO }
+    category_weight { value: 1 unit: RATIO }
+    combat {
+      surrounded_weight { value: 10 unit: RATIO }
+      maximum_warmup_under_attack_millis: 2500
+      long_warmup_millis: 3000
+      maximum_long_warmup_distance { value: 2.5 unit: METER }
+    }
+  }
+  category: ATTACK
+  minimum_realm: WANDERING_QI
+  slots {
+    id: "hand_meridians" module: MERIDIAN tags: "human:hand_meridian"
+    minimum_count: 2 maximum_count: 6 require_opened: true
+  }
+  cost {
+    qi {
+      slot_id: "hand_meridians"
+      matching: ANY_ATTRIBUTE_AT_LEAST_PHASE
+      phase: FREE
+      amount { value: 10 unit: QI }
+      distribution: EVEN
+    }
+  }
+  phases { warmup_millis: 3350 active_millis: 350 recovery_millis: 2300 interruptible_by_damage: true }
+  cooldown_millis: 5000
+  effects { at_millis: 0 presentation { id: "meridian_door_breaker:door_breaker_sweep" duration: UNTIL_RECOVERY_END start_millis: 0 } }
+  effects {
+    at_millis: 3350
+    weapon_strike {
+      shape: SECTOR distance { value: 3 unit: METER } angle { value: 180 unit: DEGREE }
+      facing_offset { value: 0 unit: DEGREE } multiplier { value: 1 unit: RATIO }
+      maximum_targets: 5 cast_target_limit: 5 knockback { value: 0 unit: RATIO }
+      can_two_hand: true two_hand_multiplier { value: 1.2 unit: RATIO } break_shield: false
+      last_strike: false durability_base: 3 shield_cooldown_millis: 0 shield_break_millis: 0 dedup_group: "sweep"
+    }
+  }
+  effects {
+    at_millis: 3700
+    weapon_strike {
+      shape: SECTOR distance { value: 3 unit: METER } angle { value: 180 unit: DEGREE }
+      facing_offset { value: 180 unit: DEGREE } multiplier { value: 1 unit: RATIO }
+      maximum_targets: 5 cast_target_limit: 5 knockback { value: 0 unit: RATIO }
+      can_two_hand: true two_hand_multiplier { value: 1.2 unit: RATIO } break_shield: false
+      last_strike: true durability_base: 3 shield_cooldown_millis: 0 shield_break_millis: 0 dedup_group: "sweep"
+    }
+  }
+  presentation {
+    icon_id: "meridian_door_breaker:sweep"
+    display_name: "横扫"
+    description: "转身挥扫前后两侧，攻击周围多个敌人。起手较长，受伤可被打断，适合提前迎击包围。"
+  }
+  movement_speed_multiplier: 0.4
+  follow_up {
+    transitions {
+      previous { id: "meridian_door_breaker:knock" version: 1 }
+      recovery_start_ratio { value: 0.5 unit: RATIO }
+      after_recovery_millis: 500 start_millis: 500
+    }
+  }
+}
+
+definitions {
+  id: "meridian_door_breaker:close"
+  version: 1
+  ai_hints {
+    minimum_distance { value: 0 unit: METER }
+    maximum_distance { value: 3 unit: METER }
+    maximum_hp_ratio { value: 1 unit: RATIO }
+    minimum_qi_ratio { value: 0 unit: RATIO }
+    category_weight { value: 0.8 unit: RATIO }
+    combat {
+      pursued_weight { value: 10 unit: RATIO }
+      maximum_warmup_under_attack_millis: 2500
+    }
+  }
+  category: ATTACK
+  minimum_realm: WANDERING_QI
+  slots {
+    id: "hand_meridians" module: MERIDIAN tags: "human:hand_meridian"
+    minimum_count: 2 maximum_count: 6 require_opened: true
+  }
+  slots {
+    id: "leg_muscles" module: TISSUE tags: "human:leg_muscle"
+    minimum_count: 4 maximum_count: 4 minimum_strength { value: 510 unit: NEWTON }
+  }
+  cost {
+    qi {
+      slot_id: "hand_meridians"
+      matching: ANY_ATTRIBUTE_AT_LEAST_PHASE
+      phase: FREE
+      amount { value: 8 unit: QI }
+      distribution: EVEN
+    }
+    work {
+      slot_id: "leg_muscles" force { value: 0 unit: NEWTON }
+      power { value: 150 unit: WATT } duration { value: 0.6 unit: SECOND }
+    }
+  }
+  phases { warmup_millis: 750 active_millis: 1850 recovery_millis: 2400 interruptible_by_damage: false }
+  cooldown_millis: 4000
+  effects { at_millis: 0 presentation { id: "meridian_door_breaker:door_breaker_close" duration: UNTIL_RECOVERY_END start_millis: 0 } }
+  effects { at_millis: 750 impulse { direction: INPUT input_default_direction: BACKWARD speed { value: 3 unit: METERS_PER_SECOND } } }
+  effects { at_millis: 1050 impulse { direction: INPUT input_default_direction: BACKWARD speed { value: 3 unit: METERS_PER_SECOND } } }
+  effects {
+    at_millis: 2600
+    weapon_strike {
+      shape: SINGLE_TARGET distance { value: 3 unit: METER } angle { value: 60 unit: DEGREE }
+      facing_offset { value: 0 unit: DEGREE } multiplier { value: 1.8 unit: RATIO }
+      maximum_targets: 1 cast_target_limit: 1 knockback { value: 0 unit: RATIO }
+      can_two_hand: false two_hand_multiplier { value: 1 unit: RATIO } break_shield: false
+      last_strike: true durability_base: 2 shield_cooldown_millis: 0 shield_break_millis: 0 dedup_group: "close"
+    }
+  }
+  presentation {
+    icon_id: "meridian_door_breaker:close"
+    display_name: "掩门"
+    description: "按移动输入方向连续撤步，随后反击面前的敌人。没有方向输入时向后退，可用来拉开距离。"
+  }
+  movement_speed_multiplier: 0.4
+}
+
+definitions {
+  id: "meridian_door_breaker:chain"
+  version: 1
+  ai_hints {
+    minimum_distance { value: 0 unit: METER }
+    maximum_distance { value: 3 unit: METER }
+    maximum_hp_ratio { value: 1 unit: RATIO }
+    minimum_qi_ratio { value: 0 unit: RATIO }
+    category_weight { value: 1 unit: RATIO }
+    combat { maximum_warmup_under_attack_millis: 2500 }
+  }
+  category: ATTACK
+  minimum_realm: TRUE_QI
+  slots {
+    id: "hand_meridians" module: MERIDIAN tags: "human:hand_meridian"
+    minimum_count: 2 maximum_count: 6 require_opened: true
+  }
+  slots {
+    id: "leg_muscles" module: TISSUE tags: "human:leg_muscle"
+    minimum_count: 4 maximum_count: 4 minimum_strength { value: 510 unit: NEWTON }
+  }
+  cost {
+    qi {
+      slot_id: "hand_meridians"
+      matching: ANY_ATTRIBUTE_AT_LEAST_PHASE
+      phase: GAS
+      amount { value: 18 unit: QI }
+      distribution: EVEN
+    }
+    work {
+      slot_id: "leg_muscles" force { value: 0 unit: NEWTON }
+      power { value: 150 unit: WATT } duration { value: 0.8 unit: SECOND }
+    }
+  }
+  phases { warmup_millis: 1550 active_millis: 3450 recovery_millis: 3000 interruptible_by_damage: true }
+  cooldown_millis: 8000
+  effects { at_millis: 0 presentation { id: "meridian_door_breaker:door_breaker_chain" duration: UNTIL_RECOVERY_END start_millis: 0 } }
+  effects { at_millis: 1550 impulse { direction: FORWARD speed { value: 2.5 unit: METERS_PER_SECOND } } }
+  effects {
+    at_millis: 1700
+    weapon_strike {
+      shape: SINGLE_TARGET distance { value: 3 unit: METER } angle { value: 60 unit: DEGREE }
+      facing_offset { value: 0 unit: DEGREE } multiplier { value: 1.2 unit: RATIO }
+      maximum_targets: 1 cast_target_limit: 1 knockback { value: 0 unit: RATIO }
+      can_two_hand: true two_hand_multiplier { value: 1.2 unit: RATIO } break_shield: false
+      last_strike: false durability_base: 5 shield_cooldown_millis: 0 shield_break_millis: 0 dedup_group: "chain_first"
+    }
+  }
+  effects { at_millis: 3050 impulse { direction: FORWARD speed { value: 2.5 unit: METERS_PER_SECOND } } }
+  effects {
+    at_millis: 3200
+    weapon_strike {
+      shape: SINGLE_TARGET distance { value: 3 unit: METER } angle { value: 60 unit: DEGREE }
+      facing_offset { value: 0 unit: DEGREE } multiplier { value: 1.2 unit: RATIO }
+      maximum_targets: 1 cast_target_limit: 1 knockback { value: 0 unit: RATIO }
+      can_two_hand: true two_hand_multiplier { value: 1.2 unit: RATIO } break_shield: false
+      last_strike: false durability_base: 5 shield_cooldown_millis: 0 shield_break_millis: 0 dedup_group: "chain_second"
+    }
+  }
+  effects { at_millis: 4850 impulse { direction: FORWARD speed { value: 2.5 unit: METERS_PER_SECOND } } }
+  effects {
+    at_millis: 5000
+    weapon_strike {
+      shape: SINGLE_TARGET distance { value: 3 unit: METER } angle { value: 60 unit: DEGREE }
+      facing_offset { value: 0 unit: DEGREE } multiplier { value: 2 unit: RATIO }
+      maximum_targets: 1 cast_target_limit: 1 knockback { value: 0 unit: RATIO }
+      can_two_hand: true two_hand_multiplier { value: 1.2 unit: RATIO } break_shield: false
+      last_strike: true durability_base: 5 shield_cooldown_millis: 0 shield_break_millis: 0 dedup_group: "chain_third"
+    }
+  }
+  presentation {
+    icon_id: "meridian_door_breaker:chain"
+    display_name: "连门"
+    description: "向前连进并连续挥击，以多段攻击追压敌人。留意整式的真元消耗与收势时间。"
+  }
+  movement_speed_multiplier: 0.4
+}
+
+definitions {
+  id: "meridian_door_breaker:finale"
+  version: 1
+  ai_hints {
+    minimum_distance { value: 0 unit: METER }
+    maximum_distance { value: 4 unit: METER }
+    maximum_hp_ratio { value: 1 unit: RATIO }
+    minimum_qi_ratio { value: 0 unit: RATIO }
+    category_weight { value: 1.5 unit: RATIO }
+    combat {
+      maximum_warmup_under_attack_millis: 2500
+      long_warmup_millis: 3000
+      maximum_long_warmup_distance { value: 2.5 unit: METER }
+    }
+  }
+  category: ATTACK
+  minimum_realm: TRUE_QI
+  slots {
+    id: "hand_meridians" module: MERIDIAN tags: "human:hand_meridian"
+    minimum_count: 2 maximum_count: 6 require_opened: true
+  }
+  slots { id: "foot_meridians" module: MERIDIAN tags: "human:foot_meridian" minimum_count: 1 maximum_count: 6 require_opened: true }
+  slots { id: "arm_muscles" module: TISSUE tags: "human:arm_muscle" minimum_count: 2 maximum_count: 6 }
+  slots {
+    id: "leg_muscles" module: TISSUE tags: "human:leg_muscle"
+    minimum_count: 4 maximum_count: 4 minimum_strength { value: 510 unit: NEWTON }
+  }
+  cost {
+    qi {
+      slot_id: "hand_meridians"
+      matching: ANY_ATTRIBUTE_AT_LEAST_PHASE
+      phase: GAS
+      amount { value: 30 unit: QI }
+      distribution: EVEN
+    }
+    work {
+      slot_id: "leg_muscles" force { value: 0 unit: NEWTON }
+      power { value: 250 unit: WATT } duration { value: 0.4 unit: SECOND }
+    }
+  }
+  phases { warmup_millis: 4050 active_millis: 800 recovery_millis: 4150 interruptible_by_damage: true }
+  cooldown_millis: 15000
+  effects { at_millis: 0 presentation { id: "meridian_door_breaker:door_breaker_finale" duration: UNTIL_RECOVERY_END start_millis: 0 } }
+  effects {
+    at_millis: 4050
+    tissue_modifier {
+      slot_id: "arm_muscles"
+      curve { offset_millis: 0 value: 0 }
+      curve { offset_millis: 600 value: 1 }
+      curve { offset_millis: 1400 value: 1 }
+      curve { offset_millis: 2200 value: -1 }
+      curve { offset_millis: 9000 value: -1 }
+      curve { offset_millis: 11000 value: 0 }
+      strength_peak { value: 1.4 unit: RATIO }
+      burst_peak { value: 1.4 unit: RATIO }
+      endurance_peak { value: 1.4 unit: RATIO }
+      recovery_peak { value: 1.4 unit: RATIO }
+    }
+  }
+  effects { at_millis: 4050 impulse { direction: UP speed { value: 8.4 unit: METERS_PER_SECOND } } }
+  effects { at_millis: 4050 impulse { direction: TOWARD_TARGET speed { value: 4 unit: METERS_PER_SECOND } } }
+  effects {
+    at_millis: 4850
+    weapon_strike {
+      shape: SECTOR distance { value: 4 unit: METER } angle { value: 90 unit: DEGREE }
+      facing_offset { value: 0 unit: DEGREE } multiplier { value: 2.5 unit: RATIO }
+      maximum_targets: 6 cast_target_limit: 6 knockback { value: 0 unit: RATIO }
+      can_two_hand: true two_hand_multiplier { value: 1.2 unit: RATIO } break_shield: false
+      last_strike: true durability_base: 8 shield_cooldown_millis: 0 shield_break_millis: 0 dedup_group: "finale"
+    }
+  }
+  effects {
+    at_millis: 4850
+    break_blocks {
+      forward_distance { value: 3 unit: METER } width { value: 3 unit: METER }
+      block_tags: "meridian_door_breaker:breakable_doors" maximum_doors: 4
+    }
+  }
+  presentation {
+    icon_id: "meridian_door_breaker:finale"
+    display_name: "万门一斩"
+    description: "蓄势后向前突进，以强力斩击收尾。起手较长，适合看准空隙再发动。"
+  }
+  movement_speed_multiplier: 0.4
+  follow_up {
+    only_follow_up: true
+    transitions {
+      previous { id: "meridian_door_breaker:cleave" version: 1 }
+      recovery_start_ratio { value: 0.5 unit: RATIO }
+      after_recovery_millis: 500 start_millis: 1500
+    }
+    transitions {
+      previous { id: "meridian_door_breaker:chain" version: 1 }
+      recovery_start_ratio { value: 0.5 unit: RATIO }
+      after_recovery_millis: 500 start_millis: 1500
+    }
+  }
+}

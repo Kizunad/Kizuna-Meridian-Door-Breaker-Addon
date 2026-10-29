@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "meridian_door_breaker:cutting_main_hand",
+    "meridian_door_breaker:cutting_off_hand",
+    "meridian_door_breaker:cutting_two_handed"
+  ]
+}

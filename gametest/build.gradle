@@ -1,0 +1,33 @@
+plugins { id 'fabric-loom' }
+
+description = '独立 GameTest 装配，验证真实目录、按卷学习和原版数据注册表。'
+
+dependencies {
+    minecraft 'com.mojang:minecraft:1.20.1'
+    mappings 'net.fabricmc:yarn:1.20.1+build.10:v2'
+    modImplementation 'net.fabricmc:fabric-loader:0.16.10'
+    modImplementation 'net.fabricmc.fabric-api:fabric-api:0.92.3+1.20.1'
+    implementation project(':verification')
+    modImplementation('local.meridian.technique:fabric') { transitive = false }
+}
+
+processResources {
+    from(project(':fabric').sourceSets.main.resources) { exclude 'fabric.mod.json' }
+    from(project(':shared').sourceSets.main.resources)
+}
+
+loom {
+    mods {
+        meridian_door_breaker_test { sourceSet sourceSets.main }
+    }
+    runs {
+        gametest {
+            server()
+            name '破门斩数据 GameTest'
+            runDir 'build/gametest'
+            vmArg '-Dfabric-api.gametest'
+            vmArg '-Dfabric-api.gametest.report-file=build/gametest-results.xml'
+            vmArg "-DdoorBreaker.blockItemsReport=${layout.buildDirectory.file('block-items.json').get().asFile}"
+        }
+    }
+}
