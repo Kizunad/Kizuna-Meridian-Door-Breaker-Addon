@@ -6,26 +6,19 @@ pluginManagement {
     }
 }
 
+// 相邻仓库位置、产物路径与第三方版本都由 Framework 的工作区脚本提供（kizunaWorkspace、libs）。
+apply from: new File(rootDir.parentFile, 'Kizuna-Meridian-Mod-Framework/scripts/workspace.gradle')
+
 rootProject.name = 'kizuna-meridian-door-breaker-addon'
 include 'shared', 'fabric', 'verification', 'gametest'
 
-includeBuild(providers.gradleProperty('meridianFrameworkDir')
-        .getOrElse('../Kizuna-Meridian-Mod-Framework')) {
-    dependencySubstitution {
-        substitute module('local.meridian:client') using project(':client')
-        substitute module('local.meridian:server') using project(':server')
-    }
-}
-includeBuild(providers.gradleProperty('meridianTechniqueDir')
-        .getOrElse('../Kizuna-Meridian-Technique-Framework')) {
-    dependencySubstitution {
-        substitute module('local.meridian.technique:server') using project(':server')
-        substitute module('local.meridian.technique:fabric') using project(':fabric')
-    }
-}
-includeBuild(providers.gradleProperty('meridianHumanDir')
-        .getOrElse('../Kizuna-Meridian-Human-Addon')) {
-    dependencySubstitution {
-        substitute module('local.meridian.human:server') using project(':server')
-    }
-}
+// 验证工具直接使用框架、功法库与 Human 的当前源码，均以源码组合。local.meridian 是框架的本地替换键；
+// 本构建直接组合框架时以这里的规则为准，功法与 Human 的协议还需要 client。
+kizunaWorkspace.includeSource('framework', [client: 'local.meridian:client', server: 'local.meridian:server'])
+// 功法 fabric 是模组依赖，Loom 按真实坐标重新加入其传递库，所以功法库与 Human 的替换键都用各工程自身的 group 与工程名。
+kizunaWorkspace.includeSource('technique', [
+        fabric: 'dev.kizuna.meridian.technique:fabric',
+        server: 'dev.kizuna.meridian.technique:server',
+        shared: 'dev.kizuna.meridian.technique:shared'
+])
+kizunaWorkspace.includeSource('human', [server: 'dev.kizuna.meridian.human:server'])

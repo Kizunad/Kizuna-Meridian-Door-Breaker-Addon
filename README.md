@@ -10,7 +10,7 @@
 
 ## 构建
 
-本地相邻工作区提供 Framework、Technique、Human 与 Damage 依赖。运行完整检查：
+本地相邻工作区提供 Framework、Technique、Human 与 Damage 依赖：`settings.gradle` 应用 Framework 的 `scripts/workspace.gradle`，按装配清单以源码组合框架、功法库与 Human，版本取版本目录 `libs`；单个仓库可用 `-Pkizuna.dir.<清单 id>` 改指。运行完整检查：
 
 ```sh
 bash "gradlew" test build :gametest:runGametest
