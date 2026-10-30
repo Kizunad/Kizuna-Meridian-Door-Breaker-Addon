@@ -8,7 +8,10 @@
     "meridian_technique:catalogs": "data/meridian_door_breaker/technique_catalog.txtpb"
   },
   "entrypoints": {
-    "fabric-gametest": ["dev.kizuna.meridian.doorbreaker.test.DoorBreakerGameTest"],
+    "fabric-gametest": [
+      "dev.kizuna.meridian.doorbreaker.test.DoorBreakerGameTest",
+      "dev.kizuna.meridian.doorbreaker.test.DoorBreakerFinaleGameTest"
+    ],
     "meridian_technique_host": ["dev.kizuna.meridian.doorbreaker.test.DoorBreakerGameTest"]
   },
   "depends": {"fabric-api": "*", "meridian_technique": "*"}

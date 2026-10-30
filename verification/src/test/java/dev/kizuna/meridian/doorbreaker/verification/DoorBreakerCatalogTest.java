@@ -4,11 +4,14 @@ import dev.kizuna.meridian.human.server.HumanContent;
 import dev.kizuna.meridian.protocol.pb.BodyMessages.QiPhase;
 import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.QiCostMatching;
 import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.QiDistribution;
+import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.StrikeShape;
 import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.TechniqueDefinition;
 import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.TechniqueEffect;
 import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.TechniqueReference;
+import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.WeaponStrike;
 import dev.kizuna.meridian.technique.server.TechniqueAddonResources;
 import dev.kizuna.meridian.technique.server.TechniqueCatalogManifest;
+import dev.kizuna.meridian.technique.server.TechniqueForecasts;
 import dev.kizuna.meridian.technique.server.TechniqueRegistry;
 import org.junit.Test;
 
@@ -34,11 +37,15 @@ public final class DoorBreakerCatalogTest {
     private static final Map<String, Double> TOTAL_QI_COSTS = Map.of(
             "knock", 3.0, "cleave", 8.0, "ram", 8.0, "hook", 8.0,
             "sweep", 10.0, "close", 8.0, "chain", 18.0, "finale", 30.0);
-    private static final int WORKING_LEG_COUNT = 4;
-    private static final double MINIMUM_LEG_STRENGTH = 510;
+    private static final int WORKING_LEG_COUNT = 6;
     private static final List<Long> KNOCK_HITS = List.of(900L, 1250L, 1700L);
     private static final List<Double> KNOCK_MULTIPLIERS = List.of(0.3, 0.3, 0.9);
     private static final double KNOCK_TOTAL_MULTIPLIER = 1.5;
+    private static final List<Long> FINALE_HITS = List.of(2300L, 4850L);
+    private static final List<Double> FINALE_MULTIPLIERS = List.of(0.8, 2.5);
+    private static final List<Double> FINALE_DISTANCES = List.of(2.5, 4.0);
+    private static final List<Double> FINALE_ANGLES = List.of(60.0, 90.0);
+    private static final List<Integer> FINALE_MAXIMUM_TARGETS = List.of(3, 6);
     private static final Map<String, Double> TOTAL_LEG_POWER = Map.of(
             "ram", 600.0, "close", 600.0, "chain", 600.0, "finale", 1000.0);
 
@@ -52,19 +59,18 @@ public final class DoorBreakerCatalogTest {
             var definition = registry.findLatest(NAMESPACE + ":" + entry.getKey()).orElseThrow();
             var slot = definition.getSlotsList().stream()
                     .filter(candidate -> candidate.getId().equals("leg_muscles")).findFirst().orElseThrow();
-            assertEquals(MINIMUM_LEG_STRENGTH, slot.getMinimumStrength().getValue(), 0);
+            assertFalse(slot.hasMinimumStrength());
             var muscles = structure.getTissuesList().stream()
                     .filter(tissue -> tissue.getTagsList().containsAll(slot.getTagsList()))
-                    .filter(tissue -> tissue.getCapacity().getStrengthNewtons() >= slot.getMinimumStrength().getValue())
                     .toList();
             assertEquals(WORKING_LEG_COUNT, muscles.size());
             assertEquals(WORKING_LEG_COUNT, slot.getMinimumCount());
             assertEquals(WORKING_LEG_COUNT, slot.getMaximumCount());
             var work = definition.getCost().getWork(0);
             double perMuscle = work.getPower().getValue();
-            assertEquals(entry.getValue(), muscles.size() * perMuscle, 0);
+            assertEquals(entry.getValue(), muscles.size() * perMuscle, EPSILON);
             for (var muscle : muscles) {
-                assertTrue(muscle.getCapacity().getBurstWatts() >= perMuscle);
+                assertTrue(muscle.getCapacity().getBurstWatts() > perMuscle);
             }
         }
     }
@@ -91,6 +97,39 @@ public final class DoorBreakerCatalogTest {
         var phases = definition.getPhases();
         assertEquals(KNOCK_HITS.get(0).longValue(), phases.getWarmupMillis());
         assertFalse(phases.getInterruptibleByDamage());
+    }
+
+    @Test
+    public void finaleSwingsLightlyInsideWarmupBeforeTheLandingCleave() throws IOException {
+        // 前荡轻击在承接剪辑之后、可打断的起手期内；落地重劈仍是收尾击和唯一破块时刻。
+        var definition = DoorBreakerCatalog.registry(DoorBreakerCatalog.load())
+                .findLatest(NAMESPACE + ":finale").orElseThrow();
+        var effects = definition.getEffectsList().stream().filter(TechniqueEffect::hasWeaponStrike).toList();
+        assertEquals(FINALE_HITS, effects.stream().map(TechniqueEffect::getAtMillis).toList());
+        var strikes = effects.stream().map(TechniqueEffect::getWeaponStrike).toList();
+        assertEquals(FINALE_MULTIPLIERS, strikes.stream().map(strike -> strike.getMultiplier().getValue()).toList());
+        assertEquals(FINALE_DISTANCES, strikes.stream().map(strike -> strike.getDistance().getValue()).toList());
+        assertEquals(FINALE_ANGLES, strikes.stream().map(strike -> strike.getAngle().getValue()).toList());
+        assertEquals(FINALE_MAXIMUM_TARGETS, strikes.stream().map(WeaponStrike::getMaximumTargets).toList());
+        assertEquals(strikes.size(), strikes.stream().map(WeaponStrike::getDedupGroup).distinct().count());
+        WeaponStrike swing = strikes.get(0);
+        WeaponStrike cleave = strikes.get(strikes.size() - 1);
+        assertEquals(StrikeShape.SECTOR, swing.getShape());
+        assertEquals(cleave.getCanTwoHand(), swing.getCanTwoHand());
+        assertEquals(cleave.getTwoHandMultiplier().getValue(), swing.getTwoHandMultiplier().getValue(), EPSILON);
+        assertFalse(swing.getBreakShield());
+        assertFalse(swing.getLastStrike());
+        assertTrue(cleave.getLastStrike());
+        var phases = definition.getPhases();
+        assertTrue(phases.getInterruptibleByDamage());
+        assertTrue(FINALE_HITS.get(0) < phases.getWarmupMillis());
+        var breaks = definition.getEffectsList().stream()
+                .filter(TechniqueEffect::hasBreakBlocks).map(TechniqueEffect::getAtMillis).toList();
+        assertEquals(List.of(FINALE_HITS.get(1)), breaks);
+        assertEquals(FINALE_HITS.get(0).longValue(), TechniqueForecasts.firstStrike(definition).orElseThrow().millis());
+        for (var transition : definition.getFollowUp().getTransitionsList()) {
+            assertTrue(transition.getStartMillis() <= FINALE_HITS.get(0));
+        }
     }
 
     @Test

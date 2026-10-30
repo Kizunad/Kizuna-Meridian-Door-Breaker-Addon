@@ -152,6 +152,20 @@ definitions {
     }
   }
   effects {
+    at_millis: 0
+    sound {
+      sound_id: "minecraft:item.armor.equip_leather" anchor: CASTER
+      volume { value: 0.5 unit: RATIO } pitch { value: 0.9 unit: RATIO }
+    }
+  }
+  effects {
+    at_millis: 900
+    sound {
+      sound_id: "minecraft:entity.player.attack.weak" anchor: CASTER
+      volume { value: 0.5 unit: RATIO } pitch { value: 0.8 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
+  effects {
     at_millis: 900
     weapon_strike {
       shape: SINGLE_TARGET
@@ -171,6 +185,20 @@ definitions {
       shield_cooldown_millis: 0
       shield_break_millis: 0
       dedup_group: "knock_1"
+    }
+  }
+  effects {
+    at_millis: 900
+    sound {
+      sound_id: "minecraft:entity.player.attack.knockback" anchor: TARGET
+      volume { value: 0.7 unit: RATIO } pitch { value: 0.9 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
+  effects {
+    at_millis: 1250
+    sound {
+      sound_id: "minecraft:entity.player.attack.weak" anchor: CASTER
+      volume { value: 0.5 unit: RATIO } pitch { value: 0.8 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
     }
   }
   effects {
@@ -196,6 +224,20 @@ definitions {
     }
   }
   effects {
+    at_millis: 1250
+    sound {
+      sound_id: "minecraft:entity.player.attack.knockback" anchor: TARGET
+      volume { value: 0.7 unit: RATIO } pitch { value: 0.9 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
+  effects {
+    at_millis: 1700
+    sound {
+      sound_id: "minecraft:entity.player.attack.weak" anchor: CASTER
+      volume { value: 0.6 unit: RATIO } pitch { value: 0.7 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
+  effects {
     at_millis: 1700
     weapon_strike {
       shape: SINGLE_TARGET
@@ -215,6 +257,13 @@ definitions {
       shield_cooldown_millis: 0
       shield_break_millis: 0
       dedup_group: "knock_3"
+    }
+  }
+  effects {
+    at_millis: 1700
+    sound {
+      sound_id: "minecraft:entity.player.attack.knockback" anchor: TARGET
+      volume { value: 1 unit: RATIO } pitch { value: 0.6 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
     }
   }
   presentation {
@@ -274,6 +323,27 @@ definitions {
     presentation { id: "meridian_door_breaker:door_breaker_cleave" duration: UNTIL_RECOVERY_END start_millis: 0 }
   }
   effects {
+    at_millis: 0
+    sound {
+      sound_id: "minecraft:item.armor.equip_leather" anchor: CASTER
+      volume { value: 0.6 unit: RATIO } pitch { value: 0.8 unit: RATIO }
+    }
+  }
+  effects {
+    at_millis: 850
+    sound {
+      sound_id: "minecraft:block.stone.step" anchor: CASTER
+      volume { value: 0.5 unit: RATIO } pitch { value: 0.9 unit: RATIO }
+    }
+  }
+  effects {
+    at_millis: 3200
+    sound {
+      sound_id: "minecraft:entity.player.attack.sweep" anchor: CASTER
+      volume { value: 0.8 unit: RATIO } pitch { value: 0.7 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
+  effects {
     at_millis: 3200
     weapon_strike {
       shape: SINGLE_TARGET distance { value: 3 unit: METER }
@@ -286,9 +356,23 @@ definitions {
   }
   effects {
     at_millis: 3200
+    sound {
+      sound_id: "minecraft:entity.player.attack.strong" anchor: TARGET
+      volume { value: 1 unit: RATIO } pitch { value: 0.8 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
+  effects {
+    at_millis: 3200
     break_blocks {
       forward_distance { value: 2 unit: METER } width { value: 1 unit: METER }
       block_tags: "meridian_door_breaker:breakable_doors" maximum_doors: 2
+    }
+  }
+  effects {
+    at_millis: 4500
+    sound {
+      sound_id: "minecraft:block.stone.step" anchor: CASTER
+      volume { value: 0.4 unit: RATIO } pitch { value: 0.9 unit: RATIO }
     }
   }
   presentation {
@@ -325,7 +409,7 @@ definitions {
   }
   slots {
     id: "leg_muscles" module: TISSUE tags: "human:leg_muscle"
-    minimum_count: 4 maximum_count: 4 minimum_strength { value: 510 unit: NEWTON }
+    minimum_count: 6 maximum_count: 6
   }
   cost {
     qi {
@@ -337,15 +421,43 @@ definitions {
     }
     work {
       slot_id: "leg_muscles" force { value: 0 unit: NEWTON }
-      power { value: 150 unit: WATT } duration { value: 0.9 unit: SECOND }
+      power { value: 100 unit: WATT } duration { value: 0.9 unit: SECOND }
     }
   }
   phases { warmup_millis: 1550 active_millis: 850 recovery_millis: 2600 interruptible_by_damage: false }
   cooldown_millis: 4000
   effects { at_millis: 0 presentation { id: "meridian_door_breaker:door_breaker_ram" duration: UNTIL_RECOVERY_END start_millis: 0 } }
+  effects {
+    at_millis: 0
+    sound {
+      sound_id: "minecraft:item.armor.equip_leather" anchor: CASTER
+      volume { value: 0.5 unit: RATIO } pitch { value: 0.8 unit: RATIO }
+    }
+  }
   effects { at_millis: 1550 impulse { direction: TOWARD_TARGET speed { value: 3 unit: METERS_PER_SECOND } } }
+  effects {
+    at_millis: 1550
+    sound {
+      sound_id: "minecraft:block.stone.step" anchor: CASTER
+      volume { value: 0.7 unit: RATIO } pitch { value: 0.8 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
   effects { at_millis: 1800 impulse { direction: TOWARD_TARGET speed { value: 3 unit: METERS_PER_SECOND } } }
+  effects {
+    at_millis: 1800
+    sound {
+      sound_id: "minecraft:block.stone.step" anchor: CASTER
+      volume { value: 0.7 unit: RATIO } pitch { value: 0.85 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
   effects { at_millis: 2050 impulse { direction: TOWARD_TARGET speed { value: 3 unit: METERS_PER_SECOND } } }
+  effects {
+    at_millis: 2050
+    sound {
+      sound_id: "minecraft:block.stone.step" anchor: CASTER
+      volume { value: 0.7 unit: RATIO } pitch { value: 0.9 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
   effects {
     at_millis: 2400
     weapon_strike {
@@ -354,6 +466,20 @@ definitions {
       maximum_targets: 1 cast_target_limit: 1 knockback { value: 1 unit: RATIO }
       can_two_hand: false two_hand_multiplier { value: 1 unit: RATIO } break_shield: false
       last_strike: true durability_base: 2 shield_cooldown_millis: 0 shield_break_millis: 0 dedup_group: "ram"
+    }
+  }
+  effects {
+    at_millis: 2400
+    sound {
+      sound_id: "minecraft:entity.player.attack.knockback" anchor: TARGET
+      volume { value: 1 unit: RATIO } pitch { value: 0.55 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
+  effects {
+    at_millis: 3650
+    sound {
+      sound_id: "minecraft:block.stone.step" anchor: CASTER
+      volume { value: 0.4 unit: RATIO } pitch { value: 0.9 unit: RATIO }
     }
   }
   presentation {
@@ -404,6 +530,27 @@ definitions {
   cooldown_millis: 5000
   effects { at_millis: 0 presentation { id: "meridian_door_breaker:door_breaker_hook" duration: UNTIL_RECOVERY_END start_millis: 0 } }
   effects {
+    at_millis: 0
+    sound {
+      sound_id: "minecraft:item.armor.equip_leather" anchor: CASTER
+      volume { value: 0.5 unit: RATIO } pitch { value: 0.9 unit: RATIO }
+    }
+  }
+  effects {
+    at_millis: 800
+    sound {
+      sound_id: "minecraft:block.stone.step" anchor: CASTER
+      volume { value: 0.4 unit: RATIO } pitch { value: 0.9 unit: RATIO }
+    }
+  }
+  effects {
+    at_millis: 2050
+    sound {
+      sound_id: "minecraft:entity.player.attack.weak" anchor: CASTER
+      volume { value: 0.6 unit: RATIO } pitch { value: 0.7 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
+  effects {
     at_millis: 2050
     weapon_strike {
       shape: SINGLE_TARGET distance { value: 3 unit: METER } angle { value: 60 unit: DEGREE }
@@ -411,6 +558,27 @@ definitions {
       maximum_targets: 1 cast_target_limit: 1 knockback { value: 0 unit: RATIO }
       can_two_hand: false two_hand_multiplier { value: 1 unit: RATIO } break_shield: true
       last_strike: true durability_base: 2 shield_cooldown_millis: 2000 shield_break_millis: 5000 dedup_group: "hook"
+    }
+  }
+  effects {
+    at_millis: 2050
+    sound {
+      sound_id: "minecraft:entity.player.attack.strong" anchor: TARGET
+      volume { value: 0.9 unit: RATIO } pitch { value: 0.9 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
+  effects {
+    at_millis: 2400
+    sound {
+      sound_id: "minecraft:block.stone.step" anchor: CASTER
+      volume { value: 0.4 unit: RATIO } pitch { value: 0.9 unit: RATIO }
+    }
+  }
+  effects {
+    at_millis: 3200
+    sound {
+      sound_id: "minecraft:block.stone.step" anchor: CASTER
+      volume { value: 0.4 unit: RATIO } pitch { value: 0.85 unit: RATIO }
     }
   }
   presentation {
@@ -463,6 +631,27 @@ definitions {
   cooldown_millis: 5000
   effects { at_millis: 0 presentation { id: "meridian_door_breaker:door_breaker_sweep" duration: UNTIL_RECOVERY_END start_millis: 0 } }
   effects {
+    at_millis: 0
+    sound {
+      sound_id: "minecraft:item.armor.equip_leather" anchor: CASTER
+      volume { value: 0.6 unit: RATIO } pitch { value: 0.8 unit: RATIO }
+    }
+  }
+  effects {
+    at_millis: 800
+    sound {
+      sound_id: "minecraft:block.stone.step" anchor: CASTER
+      volume { value: 0.4 unit: RATIO } pitch { value: 0.9 unit: RATIO }
+    }
+  }
+  effects {
+    at_millis: 3350
+    sound {
+      sound_id: "minecraft:entity.player.attack.sweep" anchor: CASTER
+      volume { value: 0.7 unit: RATIO } pitch { value: 0.9 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
+  effects {
     at_millis: 3350
     weapon_strike {
       shape: SECTOR distance { value: 3 unit: METER } angle { value: 180 unit: DEGREE }
@@ -473,6 +662,20 @@ definitions {
     }
   }
   effects {
+    at_millis: 3350
+    sound {
+      sound_id: "minecraft:entity.player.attack.strong" anchor: TARGET
+      volume { value: 0.8 unit: RATIO } pitch { value: 0.9 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
+  effects {
+    at_millis: 3700
+    sound {
+      sound_id: "minecraft:entity.player.attack.sweep" anchor: CASTER
+      volume { value: 0.9 unit: RATIO } pitch { value: 0.75 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
+  effects {
     at_millis: 3700
     weapon_strike {
       shape: SECTOR distance { value: 3 unit: METER } angle { value: 180 unit: DEGREE }
@@ -480,6 +683,20 @@ definitions {
       maximum_targets: 5 cast_target_limit: 5 knockback { value: 0 unit: RATIO }
       can_two_hand: true two_hand_multiplier { value: 1.2 unit: RATIO } break_shield: false
       last_strike: true durability_base: 3 shield_cooldown_millis: 0 shield_break_millis: 0 dedup_group: "sweep"
+    }
+  }
+  effects {
+    at_millis: 3700
+    sound {
+      sound_id: "minecraft:entity.player.attack.strong" anchor: TARGET
+      volume { value: 1 unit: RATIO } pitch { value: 0.8 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
+  effects {
+    at_millis: 4300
+    sound {
+      sound_id: "minecraft:block.stone.step" anchor: CASTER
+      volume { value: 0.4 unit: RATIO } pitch { value: 0.9 unit: RATIO }
     }
   }
   presentation {
@@ -519,7 +736,7 @@ definitions {
   }
   slots {
     id: "leg_muscles" module: TISSUE tags: "human:leg_muscle"
-    minimum_count: 4 maximum_count: 4 minimum_strength { value: 510 unit: NEWTON }
+    minimum_count: 6 maximum_count: 6
   }
   cost {
     qi {
@@ -531,14 +748,42 @@ definitions {
     }
     work {
       slot_id: "leg_muscles" force { value: 0 unit: NEWTON }
-      power { value: 150 unit: WATT } duration { value: 0.6 unit: SECOND }
+      power { value: 100 unit: WATT } duration { value: 0.6 unit: SECOND }
     }
   }
   phases { warmup_millis: 750 active_millis: 1850 recovery_millis: 2400 interruptible_by_damage: false }
   cooldown_millis: 4000
   effects { at_millis: 0 presentation { id: "meridian_door_breaker:door_breaker_close" duration: UNTIL_RECOVERY_END start_millis: 0 } }
+  effects {
+    at_millis: 0
+    sound {
+      sound_id: "minecraft:item.armor.equip_leather" anchor: CASTER
+      volume { value: 0.5 unit: RATIO } pitch { value: 0.9 unit: RATIO }
+    }
+  }
   effects { at_millis: 750 impulse { direction: INPUT input_default_direction: BACKWARD speed { value: 3 unit: METERS_PER_SECOND } } }
+  effects {
+    at_millis: 750
+    sound {
+      sound_id: "minecraft:block.stone.step" anchor: CASTER
+      volume { value: 0.6 unit: RATIO } pitch { value: 0.9 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
   effects { at_millis: 1050 impulse { direction: INPUT input_default_direction: BACKWARD speed { value: 3 unit: METERS_PER_SECOND } } }
+  effects {
+    at_millis: 1050
+    sound {
+      sound_id: "minecraft:block.stone.step" anchor: CASTER
+      volume { value: 0.6 unit: RATIO } pitch { value: 0.95 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
+  effects {
+    at_millis: 2600
+    sound {
+      sound_id: "minecraft:entity.player.attack.weak" anchor: CASTER
+      volume { value: 0.6 unit: RATIO } pitch { value: 0.8 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
   effects {
     at_millis: 2600
     weapon_strike {
@@ -547,6 +792,20 @@ definitions {
       maximum_targets: 1 cast_target_limit: 1 knockback { value: 0 unit: RATIO }
       can_two_hand: false two_hand_multiplier { value: 1 unit: RATIO } break_shield: false
       last_strike: true durability_base: 2 shield_cooldown_millis: 0 shield_break_millis: 0 dedup_group: "close"
+    }
+  }
+  effects {
+    at_millis: 2600
+    sound {
+      sound_id: "minecraft:entity.player.attack.strong" anchor: TARGET
+      volume { value: 0.9 unit: RATIO } pitch { value: 0.9 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
+  effects {
+    at_millis: 3450
+    sound {
+      sound_id: "minecraft:block.stone.step" anchor: CASTER
+      volume { value: 0.4 unit: RATIO } pitch { value: 0.9 unit: RATIO }
     }
   }
   presentation {
@@ -576,7 +835,7 @@ definitions {
   }
   slots {
     id: "leg_muscles" module: TISSUE tags: "human:leg_muscle"
-    minimum_count: 4 maximum_count: 4 minimum_strength { value: 510 unit: NEWTON }
+    minimum_count: 6 maximum_count: 6
   }
   cost {
     qi {
@@ -588,13 +847,34 @@ definitions {
     }
     work {
       slot_id: "leg_muscles" force { value: 0 unit: NEWTON }
-      power { value: 150 unit: WATT } duration { value: 0.8 unit: SECOND }
+      power { value: 100 unit: WATT } duration { value: 0.8 unit: SECOND }
     }
   }
   phases { warmup_millis: 1550 active_millis: 3450 recovery_millis: 3000 interruptible_by_damage: true }
   cooldown_millis: 8000
   effects { at_millis: 0 presentation { id: "meridian_door_breaker:door_breaker_chain" duration: UNTIL_RECOVERY_END start_millis: 0 } }
+  effects {
+    at_millis: 0
+    sound {
+      sound_id: "minecraft:item.armor.equip_leather" anchor: CASTER
+      volume { value: 0.6 unit: RATIO } pitch { value: 0.8 unit: RATIO }
+    }
+  }
   effects { at_millis: 1550 impulse { direction: FORWARD speed { value: 2.5 unit: METERS_PER_SECOND } } }
+  effects {
+    at_millis: 1550
+    sound {
+      sound_id: "minecraft:block.stone.step" anchor: CASTER
+      volume { value: 0.6 unit: RATIO } pitch { value: 0.9 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
+  effects {
+    at_millis: 1700
+    sound {
+      sound_id: "minecraft:entity.player.attack.sweep" anchor: CASTER
+      volume { value: 0.7 unit: RATIO } pitch { value: 0.9 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
   effects {
     at_millis: 1700
     weapon_strike {
@@ -605,7 +885,28 @@ definitions {
       last_strike: false durability_base: 5 shield_cooldown_millis: 0 shield_break_millis: 0 dedup_group: "chain_first"
     }
   }
+  effects {
+    at_millis: 1700
+    sound {
+      sound_id: "minecraft:entity.player.attack.strong" anchor: TARGET
+      volume { value: 0.8 unit: RATIO } pitch { value: 0.95 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
   effects { at_millis: 3050 impulse { direction: FORWARD speed { value: 2.5 unit: METERS_PER_SECOND } } }
+  effects {
+    at_millis: 3050
+    sound {
+      sound_id: "minecraft:block.stone.step" anchor: CASTER
+      volume { value: 0.6 unit: RATIO } pitch { value: 0.9 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
+  effects {
+    at_millis: 3200
+    sound {
+      sound_id: "minecraft:entity.player.attack.sweep" anchor: CASTER
+      volume { value: 0.7 unit: RATIO } pitch { value: 0.85 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
   effects {
     at_millis: 3200
     weapon_strike {
@@ -616,7 +917,28 @@ definitions {
       last_strike: false durability_base: 5 shield_cooldown_millis: 0 shield_break_millis: 0 dedup_group: "chain_second"
     }
   }
+  effects {
+    at_millis: 3200
+    sound {
+      sound_id: "minecraft:entity.player.attack.strong" anchor: TARGET
+      volume { value: 0.9 unit: RATIO } pitch { value: 0.9 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
   effects { at_millis: 4850 impulse { direction: FORWARD speed { value: 2.5 unit: METERS_PER_SECOND } } }
+  effects {
+    at_millis: 4850
+    sound {
+      sound_id: "minecraft:block.stone.step" anchor: CASTER
+      volume { value: 0.7 unit: RATIO } pitch { value: 0.85 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
+  effects {
+    at_millis: 5000
+    sound {
+      sound_id: "minecraft:entity.player.attack.sweep" anchor: CASTER
+      volume { value: 0.9 unit: RATIO } pitch { value: 0.75 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
   effects {
     at_millis: 5000
     weapon_strike {
@@ -625,6 +947,20 @@ definitions {
       maximum_targets: 1 cast_target_limit: 1 knockback { value: 0 unit: RATIO }
       can_two_hand: true two_hand_multiplier { value: 1.2 unit: RATIO } break_shield: false
       last_strike: true durability_base: 5 shield_cooldown_millis: 0 shield_break_millis: 0 dedup_group: "chain_third"
+    }
+  }
+  effects {
+    at_millis: 5000
+    sound {
+      sound_id: "minecraft:entity.player.attack.strong" anchor: TARGET
+      volume { value: 1 unit: RATIO } pitch { value: 0.8 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
+  effects {
+    at_millis: 6350
+    sound {
+      sound_id: "minecraft:block.stone.step" anchor: CASTER
+      volume { value: 0.4 unit: RATIO } pitch { value: 0.9 unit: RATIO }
     }
   }
   presentation {
@@ -660,7 +996,7 @@ definitions {
   slots { id: "arm_muscles" module: TISSUE tags: "human:arm_muscle" minimum_count: 2 maximum_count: 6 }
   slots {
     id: "leg_muscles" module: TISSUE tags: "human:leg_muscle"
-    minimum_count: 4 maximum_count: 4 minimum_strength { value: 510 unit: NEWTON }
+    minimum_count: 6 maximum_count: 6
   }
   cost {
     qi {
@@ -672,12 +1008,50 @@ definitions {
     }
     work {
       slot_id: "leg_muscles" force { value: 0 unit: NEWTON }
-      power { value: 250 unit: WATT } duration { value: 0.4 unit: SECOND }
+      power { value: 166.66666666666666 unit: WATT } duration { value: 0.4 unit: SECOND }
     }
   }
   phases { warmup_millis: 4050 active_millis: 800 recovery_millis: 4150 interruptible_by_damage: true }
   cooldown_millis: 15000
   effects { at_millis: 0 presentation { id: "meridian_door_breaker:door_breaker_finale" duration: UNTIL_RECOVERY_END start_millis: 0 } }
+  effects {
+    at_millis: 0
+    sound {
+      sound_id: "minecraft:item.armor.equip_leather" anchor: CASTER
+      volume { value: 0.7 unit: RATIO } pitch { value: 0.7 unit: RATIO }
+    }
+  }
+  effects {
+    at_millis: 1850
+    sound {
+      sound_id: "minecraft:block.stone.step" anchor: CASTER
+      volume { value: 0.5 unit: RATIO } pitch { value: 0.9 unit: RATIO }
+    }
+  }
+  effects {
+    at_millis: 2300
+    sound {
+      sound_id: "minecraft:entity.player.attack.weak" anchor: CASTER
+      volume { value: 0.6 unit: RATIO } pitch { value: 0.8 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
+  effects {
+    at_millis: 2300
+    weapon_strike {
+      shape: SECTOR distance { value: 2.5 unit: METER } angle { value: 60 unit: DEGREE }
+      facing_offset { value: 0 unit: DEGREE } multiplier { value: 0.8 unit: RATIO }
+      maximum_targets: 3 cast_target_limit: 6 knockback { value: 0 unit: RATIO }
+      can_two_hand: true two_hand_multiplier { value: 1.2 unit: RATIO } break_shield: false
+      last_strike: false durability_base: 8 shield_cooldown_millis: 0 shield_break_millis: 0 dedup_group: "finale_swing"
+    }
+  }
+  effects {
+    at_millis: 2300
+    sound {
+      sound_id: "minecraft:entity.player.attack.strong" anchor: TARGET
+      volume { value: 0.7 unit: RATIO } pitch { value: 1 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
   effects {
     at_millis: 4050
     tissue_modifier {
@@ -697,6 +1071,27 @@ definitions {
   effects { at_millis: 4050 impulse { direction: UP speed { value: 8.4 unit: METERS_PER_SECOND } } }
   effects { at_millis: 4050 impulse { direction: TOWARD_TARGET speed { value: 4 unit: METERS_PER_SECOND } } }
   effects {
+    at_millis: 4050
+    sound {
+      sound_id: "minecraft:entity.rabbit.jump" anchor: CASTER
+      volume { value: 1 unit: RATIO } pitch { value: 0.55 unit: RATIO }
+    }
+  }
+  effects {
+    at_millis: 4700
+    sound {
+      sound_id: "minecraft:block.stone.step" anchor: CASTER
+      volume { value: 0.7 unit: RATIO } pitch { value: 0.8 unit: RATIO }
+    }
+  }
+  effects {
+    at_millis: 4850
+    sound {
+      sound_id: "minecraft:entity.player.attack.sweep" anchor: CASTER
+      volume { value: 1 unit: RATIO } pitch { value: 0.6 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
+  effects {
     at_millis: 4850
     weapon_strike {
       shape: SECTOR distance { value: 4 unit: METER } angle { value: 90 unit: DEGREE }
@@ -708,15 +1103,29 @@ definitions {
   }
   effects {
     at_millis: 4850
+    sound {
+      sound_id: "minecraft:entity.player.attack.strong" anchor: TARGET
+      volume { value: 1 unit: RATIO } pitch { value: 0.7 unit: RATIO } pitch_jitter { value: 0.05 unit: RATIO }
+    }
+  }
+  effects {
+    at_millis: 4850
     break_blocks {
       forward_distance { value: 3 unit: METER } width { value: 3 unit: METER }
       block_tags: "meridian_door_breaker:breakable_doors" maximum_doors: 4
     }
   }
+  effects {
+    at_millis: 6550
+    sound {
+      sound_id: "minecraft:block.stone.step" anchor: CASTER
+      volume { value: 0.4 unit: RATIO } pitch { value: 0.9 unit: RATIO }
+    }
+  }
   presentation {
     icon_id: "meridian_door_breaker:finale"
     display_name: "万门一斩"
-    description: "蓄势后向前突进，以强力斩击收尾。起手较长，适合看准空隙再发动。"
+    description: "先把手中器物向身前荡出一记轻击，再蓄势跃起向前突进，以强力斩击收尾。起手较长，适合看准空隙再发动。"
   }
   movement_speed_multiplier: 0.4
   follow_up {

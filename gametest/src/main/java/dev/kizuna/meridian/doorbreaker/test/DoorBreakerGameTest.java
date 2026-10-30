@@ -153,7 +153,7 @@ public final class DoorBreakerGameTest implements TechniqueHostEntrypoint {
         context.complete();
     }
 
-    private static BodySnapshot newBody(UUID entityId) {
+    static BodySnapshot newBody(UUID entityId) {
         // 初始快照使用 Human 已登记模板与正式出生构造器。
         var addons = DoorBreakerCatalog.addons();
         var template = addons.findTemplate(HumanContent.TEMPLATE_ID, HumanContent.CONTENT_VERSION)
@@ -198,14 +198,18 @@ public final class DoorBreakerGameTest implements TechniqueHostEntrypoint {
 
     private static TechniqueHostResponse response(String requestId) {
         // 空手事实显式提供，目录学习不读取物品但协议要求同步检查双手结构。
-        HeldItems emptyHands = HeldItems.newBuilder()
+        return TechniqueHostResponse.newBuilder()
+                .setRequestId(requestId)
+                .setHeldItems(emptyHands())
+                .build();
+    }
+
+    static HeldItems emptyHands() {
+        // 宿主检视必须带双手结构；只推进施放的测试不按物品事实选择出手。
+        return HeldItems.newBuilder()
                 .setMainHand(HeldItem.getDefaultInstance())
                 .setOffHand(HeldItem.getDefaultInstance())
                 .setMainHandSide(HandSide.RIGHT)
-                .build();
-        return TechniqueHostResponse.newBuilder()
-                .setRequestId(requestId)
-                .setHeldItems(emptyHands)
                 .build();
     }
 
