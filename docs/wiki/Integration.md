@@ -70,7 +70,7 @@ BlockItem 清单并把清单写到 `gametest/build/block-items.json`。新增模
 ## 音效
 
 八式都用功法库的 `sound` 效果（`SoundCue`）配原版音效，不带音频文件，数值全在目录里。时刻对齐出招
-`weapon_strike.at_millis`、冲量时刻和 PA 动画的踏步帧。服务端在该时刻按 `SoundCategory.PLAYERS` 播放，类人与玩家同一路径；
+`weapon_strike.at_millis`、冲量时刻和 PA 动画的踏步帧。服务端在该时刻按 `SoundSource.PLAYERS` 播放，类人与玩家同一路径；
 起手被打断后，之后的声音都不再播放。
 
 - `CASTER`：在施放者位置响，挥空也响。挥风声和施放者自己的脚步都用它。

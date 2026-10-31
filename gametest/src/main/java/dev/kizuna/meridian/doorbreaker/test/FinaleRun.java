@@ -25,17 +25,6 @@ import dev.kizuna.meridian.technique.server.TechniqueErrors;
 import dev.kizuna.meridian.technique.server.TechniqueHost;
 import dev.kizuna.meridian.technique.server.TechniqueRegistry;
 import dev.kizuna.meridian.technique.server.TechniqueState;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.mob.VindicatorEntity;
-import net.minecraft.entity.passive.CowEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.test.TestContext;
-import net.minecraft.util.Hand;
-
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HexFormat;
@@ -43,6 +32,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.entity.monster.Vindicator;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 /**
  * 万门一斩承接施放的内存人体宿主：按 tick 推进身体时钟，经功法库真实的施放状态机和调度器取得意图，
@@ -97,13 +96,13 @@ final class FinaleRun implements TechniqueHost {
         this.previousMillis = CAST_START_MILLIS - 1;
     }
 
-    static FinaleRun start(TestContext context, float nearDistance, float farDistance) {
+    static FinaleRun start(GameTestHelper context, float nearDistance, float farDistance) {
         // 目录取自启动后的功法服务，与正式发现路径一致；施放者朝南，两头牛在正前方。
         TechniqueRegistry registry = TechniqueFabric.service().registry();
         TechniqueDefinition definition = registry.findLatest(FINALE).orElseThrow();
-        VindicatorEntity actor = actor(context);
-        CowEntity near = target(context, nearDistance);
-        CowEntity far = target(context, farDistance);
+        Vindicator actor = actor(context);
+        Cow near = target(context, nearDistance);
+        Cow far = target(context, farDistance);
         return new FinaleRun(registry, definition, actor, near, far);
     }
 
@@ -159,7 +158,7 @@ final class FinaleRun implements TechniqueHost {
         return dose(strikes.get(strikes.size() - 1));
     }
 
-    void assertLosses(TestContext context, double nearLoss, double farLoss, String stage) {
+    void assertLosses(GameTestHelper context, double nearLoss, double farLoss, String stage) {
         // 牛没有护甲和身体宿主，原版生命损失就是世界执行器给出的剂量。
         double nearActual = TARGET_HEALTH - near.getHealth();
         double farActual = TARGET_HEALTH - far.getHealth();
@@ -284,30 +283,30 @@ final class FinaleRun implements TechniqueHost {
                 .build();
     }
 
-    private static VindicatorEntity actor(TestContext context) {
+    private static Vindicator actor(GameTestHelper context) {
         // 卫道士只作持斧施放者：无 AI、无重力、朝南站定，副手空着即双手握持。
-        VindicatorEntity actor = context.spawnEntity(EntityType.VINDICATOR, ACTOR_X, GROUND_Y, ACTOR_Z);
+        Vindicator actor = context.spawn(EntityType.VINDICATOR, ACTOR_X, GROUND_Y, ACTOR_Z);
         still(actor);
-        actor.setStackInHand(Hand.MAIN_HAND, new ItemStack(Items.IRON_AXE));
-        actor.setYaw(FACING_SOUTH);
-        actor.setHeadYaw(FACING_SOUTH);
+        actor.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_AXE));
+        actor.setYRot(FACING_SOUTH);
+        actor.setYHeadRot(FACING_SOUTH);
         return actor;
     }
 
-    private static CowEntity target(TestContext context, float distance) {
+    private static Cow target(GameTestHelper context, float distance) {
         // 无身体宿主的牛保留原版血量；满额击退抗性让被打的牛留在原位。
-        CowEntity target = context.spawnEntity(EntityType.COW, ACTOR_X, GROUND_Y, ACTOR_Z + distance);
+        Cow target = context.spawn(EntityType.COW, ACTOR_X, GROUND_Y, ACTOR_Z + distance);
         still(target);
-        target.getAttributeInstance(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE)
+        target.getAttribute(Attributes.KNOCKBACK_RESISTANCE)
                 .setBaseValue(FULL_KNOCKBACK_RESISTANCE);
-        target.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(TARGET_HEALTH);
+        target.getAttribute(Attributes.MAX_HEALTH).setBaseValue(TARGET_HEALTH);
         target.setHealth((float) TARGET_HEALTH);
         return target;
     }
 
-    private static void still(MobEntity mob) {
+    private static void still(Mob mob) {
         // 测试实体不自行移动、不下落、不发声。
-        mob.setAiDisabled(true /* aiDisabled */);
+        mob.setNoAi(true /* aiDisabled */);
         mob.setNoGravity(true /* noGravity */);
         mob.setSilent(true /* silent */);
     }

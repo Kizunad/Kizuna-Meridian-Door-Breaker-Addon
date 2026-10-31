@@ -4,7 +4,7 @@ description = '独立 GameTest 装配，验证真实目录、按卷学习和原�
 
 dependencies {
     minecraft libs.minecraft
-    mappings "net.fabricmc:yarn:${libs.versions.yarn.get()}:v2"
+    mappings loom.officialMojangMappings()
     modImplementation libs.fabric.loader
     modImplementation libs.fabric.api
     implementation project(':verification')
