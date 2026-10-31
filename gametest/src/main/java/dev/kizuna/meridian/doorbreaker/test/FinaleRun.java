@@ -34,12 +34,12 @@ import java.util.Set;
 import java.util.UUID;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.animal.Cow;
-import net.minecraft.world.entity.monster.Vindicator;
+import net.minecraft.world.entity.animal.cow.Cow;
+import net.minecraft.world.entity.monster.illager.Vindicator;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -285,7 +285,7 @@ final class FinaleRun implements TechniqueHost {
 
     private static Vindicator actor(GameTestHelper context) {
         // 卫道士只作持斧施放者：无 AI、无重力、朝南站定，副手空着即双手握持。
-        Vindicator actor = context.spawn(EntityType.VINDICATOR, ACTOR_X, GROUND_Y, ACTOR_Z);
+        Vindicator actor = context.spawn(EntityTypes.VINDICATOR, ACTOR_X, GROUND_Y, ACTOR_Z);
         still(actor);
         actor.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_AXE));
         actor.setYRot(FACING_SOUTH);
@@ -295,7 +295,7 @@ final class FinaleRun implements TechniqueHost {
 
     private static Cow target(GameTestHelper context, float distance) {
         // 无身体宿主的牛保留原版血量；满额击退抗性让被打的牛留在原位。
-        Cow target = context.spawn(EntityType.COW, ACTOR_X, GROUND_Y, ACTOR_Z + distance);
+        Cow target = context.spawn(EntityTypes.COW, ACTOR_X, GROUND_Y, ACTOR_Z + distance);
         still(target);
         target.getAttribute(Attributes.KNOCKBACK_RESISTANCE)
                 .setBaseValue(FULL_KNOCKBACK_RESISTANCE);

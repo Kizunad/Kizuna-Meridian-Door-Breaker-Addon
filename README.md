@@ -1,6 +1,6 @@
 # 破门斩
 
-本仓提供 `meridian_door_breaker` 命名空间下的一书三卷八式目录，以及 Minecraft 1.20.1
+本仓提供 `meridian_door_breaker` 命名空间下的一书三卷八式目录，以及 Minecraft 26.2
 伤害类型和数据标签。正式 Fabric 包不包含 Java 运行时代码，也不负责施放、伤害或劈门规则；这些行为由
 功法库、Damage、Human 与宿主实现。
 

@@ -22,12 +22,11 @@ import dev.kizuna.meridian.technique.server.TechniqueHostEntrypoint;
 import dev.kizuna.meridian.technique.server.TechniqueProtocol;
 import dev.kizuna.meridian.technique.server.TechniqueService;
 import dev.kizuna.meridian.technique.server.TechniqueState;
-import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -47,6 +46,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static dev.kizuna.meridian.doorbreaker.test.DoorBreakerGameTestTicks.DEFAULT_TIMEOUT;
+
 /** 破门斩整合验证，只装配测试目录和内存人体宿主。 */
 public final class DoorBreakerGameTest implements TechniqueHostEntrypoint {
     private static final String UPPER_VOLUME = "meridian_door_breaker:upper";
@@ -55,9 +56,9 @@ public final class DoorBreakerGameTest implements TechniqueHostEntrypoint {
     private static final int UPPER_TECHNIQUE_COUNT = 3;
     private static final Map<UUID, MemoryTechniqueHost> HOSTS = new HashMap<>();
     private static final TagKey<Item> BLOCK_ITEMS = TagKey.create(
-            Registries.ITEM, new ResourceLocation("meridian_door_breaker", "block_items"));
+            Registries.ITEM, Identifier.fromNamespaceAndPath("meridian_door_breaker", "block_items"));
 
-    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE)
+    @GameTest(maxTicks = DEFAULT_TIMEOUT)
     public void learnsUpperVolumeAfterPrerequisiteRejection(GameTestHelper context) throws Exception {
         // 正式 Fabric 服务在启动时发现清单；测试只提供学习所需的内存身体宿主。
         UUID entityId = UUID.randomUUID();
@@ -94,7 +95,7 @@ public final class DoorBreakerGameTest implements TechniqueHostEntrypoint {
         return TechniqueProtocol.encodeHostResponse(response);
     }
 
-    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE)
+    @GameTest(maxTicks = DEFAULT_TIMEOUT)
     public void upperScrollLearnsAllThreeTechniques(GameTestHelper context) {
         // 正式清单自动生成的上卷物品通过服务端右键入口一次写入三式。
         var player = context.makeMockServerPlayerInLevel();
@@ -103,13 +104,13 @@ public final class DoorBreakerGameTest implements TechniqueHostEntrypoint {
         MemoryTechniqueHost host = new MemoryTechniqueHost(entityId, newBody(entityId));
         HOSTS.put(entityId, host);
         try {
-            var item = TechniqueScrollItems.scrolls().get(new ResourceLocation(UPPER_VOLUME + "_scroll"));
+            var item = TechniqueScrollItems.scrolls().get(Identifier.parse(UPPER_VOLUME + "_scroll"));
             context.assertTrue(item != null, "上卷清单没有自动注册物品");
             ItemStack stack = new ItemStack(item);
             player.setItemInHand(InteractionHand.MAIN_HAND, stack);
             InteractionResult result = player.gameMode.useItem(
                     player, context.getLevel(), stack, InteractionHand.MAIN_HAND);
-            context.assertTrue(result == InteractionResult.CONSUME, "上卷右键学习失败");
+            context.assertTrue(consumed(result), "上卷右键学习失败");
             context.assertTrue(stack.isEmpty(), "生存模式没有消耗上卷物品");
             context.assertTrue(host.progress().getKnownCount() == UPPER_TECHNIQUE_COUNT, "上卷未学会全部三式");
             TechniqueService service = TechniqueFabric.service();
@@ -125,6 +126,12 @@ public final class DoorBreakerGameTest implements TechniqueHostEntrypoint {
         context.succeed();
     }
 
+    private static boolean consumed(InteractionResult result) {
+        // 26.2 的物品使用结果会另带手中物品，不能再按常量同一性比较；服务端成功且不挥手即 1.20.1 的 CONSUME。
+        return result instanceof InteractionResult.Success success
+                && success.swingSource() == InteractionResult.SwingSource.NONE;
+    }
+
     private static void rejectLowerVolume(TechniqueService service, UUID entityId) {
         // 未学上卷时必须在进度提交前拒绝下卷。
         try {
@@ -135,12 +142,12 @@ public final class DoorBreakerGameTest implements TechniqueHostEntrypoint {
         }
     }
 
-    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE)
+    @GameTest(maxTicks = DEFAULT_TIMEOUT)
     public void blockItemsTagCoversVanillaRegistry(GameTestHelper context) throws IOException {
         // 导出原版 BlockItem 清单，并确保维护的静态标签覆盖注册表全部方块物品。
         List<String> blockItemIds = blockItemIds();
         writeBlockItemReport(blockItemIds);
-        var tag = BuiltInRegistries.ITEM.getTag(BLOCK_ITEMS).orElse(null);
+        var tag = BuiltInRegistries.ITEM.get(BLOCK_ITEMS).orElse(null);
         context.assertTrue(tag != null, "缺少 meridian_door_breaker:block_items 标签");
         if (tag == null) {
             return;

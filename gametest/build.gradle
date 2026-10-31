@@ -1,14 +1,16 @@
-plugins { id 'fabric-loom' }
+plugins { id 'net.fabricmc.fabric-loom' }
 
 description = '独立 GameTest 装配，验证真实目录、按卷学习和原版数据注册表。'
 
 dependencies {
+    // 26.x 不混淆：直接用官方名编译，没有映射，模组依赖也不经重映射。
     minecraft libs.minecraft
-    mappings loom.officialMojangMappings()
-    modImplementation libs.fabric.loader
-    modImplementation libs.fabric.api
+    implementation libs.fabric.loader
+    implementation libs.fabric.api
     implementation project(':verification')
-    modImplementation('dev.kizuna.meridian.technique:fabric') { transitive = false }
+    implementation('dev.kizuna.meridian.technique:fabric') { transitive = false }
+    // 功法 Fabric 硬依赖 Framework 的 meridian_framework 模组；上一行只取功法模块本身，所以运行时单独装入。
+    runtimeOnly 'dev.kizuna.meridian:fabric'
 }
 
 processResources {

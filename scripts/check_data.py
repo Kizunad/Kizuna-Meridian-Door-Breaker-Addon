@@ -89,21 +89,22 @@ def main() -> int:
                 {"meridian_door_breaker:cutting_off_hand", "meridian_door_breaker:blunt_off_hand"}, failures)
     require_tag(tags, "meridian/tags/damage_type/two_handed.json",
                 {"meridian_door_breaker:cutting_two_handed", "meridian_door_breaker:blunt_two_handed"}, failures)
-    require_tag(tags, "meridian_door_breaker/tags/items/axes.json", {"#minecraft:axes"}, failures)
-    require_tag(tags, "meridian_door_breaker/tags/items/handheld_misc.json",
+    require_tag(tags, "meridian_door_breaker/tags/item/axes.json", {"#minecraft:axes"}, failures)
+    require_tag(tags, "meridian_door_breaker/tags/item/handheld_misc.json",
                 {"minecraft:torch", "minecraft:soul_torch", "minecraft:redstone_torch"}, failures)
-    require_tag(tags, "meridian_door_breaker/tags/items/edged.json",
+    require_tag(tags, "meridian_door_breaker/tags/item/edged.json",
                 {"#minecraft:swords", "minecraft:trident"}, failures)
-    require_tag(tags, "meridian_door_breaker/tags/items/melee_tools.json",
-                {"#minecraft:tools", "#minecraft:swords", "minecraft:trident"}, failures)
-    require_tag(tags, "meridian_door_breaker/tags/items/iron_axes.json",
+    require_tag(tags, "meridian_door_breaker/tags/item/melee_tools.json",
+                {"#minecraft:swords", "#minecraft:axes", "#minecraft:pickaxes", "#minecraft:shovels",
+                 "#minecraft:hoes", "minecraft:trident"}, failures)
+    require_tag(tags, "meridian_door_breaker/tags/item/iron_axes.json",
                 {"minecraft:iron_axe"}, failures)
-    require_tag(tags, "meridian_door_breaker/tags/items/durable_tools.json",
+    require_tag(tags, "meridian_door_breaker/tags/item/durable_tools.json",
                 {"minecraft:iron_sword", "minecraft:netherite_sword"}, failures)
-    require_tag(tags, "meridian_door_breaker/tags/blocks/breakable_doors.json",
+    require_tag(tags, "meridian_door_breaker/tags/block/breakable_doors.json",
                 {"#minecraft:wooden_doors", "#minecraft:wooden_trapdoors", "#minecraft:fence_gates"}, failures)
 
-    block_items = tags.get("meridian_door_breaker/tags/items/block_items.json")
+    block_items = tags.get("meridian_door_breaker/tags/item/block_items.json")
     if not isinstance(block_items, dict):
         failures.append("缺少静态 block_items 物品标签")
     else:

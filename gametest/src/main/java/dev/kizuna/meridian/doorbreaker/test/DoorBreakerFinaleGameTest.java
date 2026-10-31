@@ -2,8 +2,7 @@ package dev.kizuna.meridian.doorbreaker.test;
 
 import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.CastPhase;
 import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.TechniqueProgress;
-import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
-import net.minecraft.gametest.framework.GameTest;
+import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import java.util.List;
 
@@ -21,7 +20,7 @@ public final class DoorBreakerFinaleGameTest {
     private static final long SETTLE_TICKS = 3;
     private static final int TEST_TICKS = 120;
 
-    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE, timeoutTicks = TEST_TICKS)
+    @GameTest(maxTicks = TEST_TICKS)
     public void swingHitsOnlyTheNearTargetBeforeTheLandingCleave(GameTestHelper context) {
         // 前荡轻击只够到身前 2 格，落地重劈再砍身前目标并够到 3 格外的目标。
         FinaleRun run = FinaleRun.start(context, NEAR_DISTANCE, FAR_DISTANCE);
@@ -44,7 +43,7 @@ public final class DoorBreakerFinaleGameTest {
         });
     }
 
-    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE, timeoutTicks = TEST_TICKS)
+    @GameTest(maxTicks = TEST_TICKS)
     public void staggerInWarmupKeepsTheSwingAndDropsTheCleave(GameTestHelper context) {
         // 起手 2.5 秒被僵直打断：已结算的轻击不撤销，此后不再出落地重劈。
         FinaleRun run = FinaleRun.start(context, NEAR_DISTANCE, FAR_DISTANCE);

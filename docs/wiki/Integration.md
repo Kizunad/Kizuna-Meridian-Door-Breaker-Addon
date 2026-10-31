@@ -62,7 +62,7 @@
 该标签对使用这两个伤害类型的其他功法钝击同样生效；切割和双手钝击类型不在此标签中。
 三击仍分别经过护甲、身体损伤、溢出蔓延和伤害日志，不绕过盾挡、伤势或其他无敌条件。
 
-`block_items` 是由 Minecraft 1.20.1 注册表导出的静态物品辅助标签，GameTest 会核对标签覆盖完整原版
+`block_items` 是由 Minecraft 26.2 注册表导出的静态物品辅助标签，GameTest 会核对标签覆盖完整原版
 BlockItem 清单并把清单写到 `gametest/build/block-items.json`。新增模组的方块物品需由整合包补进该标签。
 火把虽然属于 BlockItem，仍按其他手持物品造成 0.5 基础伤害；`handheld_misc` 在方块分类前匹配普通、灵魂及红石火把。
 铁门与铁活板门不属于可劈门标签。首版不定义 `protected` 标签。
