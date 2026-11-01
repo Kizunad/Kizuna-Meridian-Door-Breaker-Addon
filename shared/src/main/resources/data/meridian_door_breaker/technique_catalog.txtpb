@@ -293,7 +293,7 @@ definitions {
     category_weight { value: 1.2 unit: RATIO }
     combat {
       maximum_warmup_under_attack_millis: 1250
-      long_warmup_millis: 1500
+      long_warmup_millis: 1550
       maximum_long_warmup_distance { value: 2.5 unit: METER }
     }
   }
@@ -608,7 +608,7 @@ definitions {
     combat {
       surrounded_weight { value: 10 unit: RATIO }
       maximum_warmup_under_attack_millis: 1250
-      long_warmup_millis: 1500
+      long_warmup_millis: 1550
       maximum_long_warmup_distance { value: 2.5 unit: METER }
     }
   }
@@ -982,7 +982,7 @@ definitions {
     category_weight { value: 1.5 unit: RATIO }
     combat {
       maximum_warmup_under_attack_millis: 1250
-      long_warmup_millis: 1500
+      long_warmup_millis: 1550
       maximum_long_warmup_distance { value: 2.5 unit: METER }
     }
   }
