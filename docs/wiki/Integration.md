@@ -81,53 +81,53 @@ BlockItem 清单并把清单写到 `gametest/build/block-items.json`。新增模
 | 式 | 时刻 ms | 声音（`minecraft:`） | 音量 | 音调 | 锚点 | 用途 |
 |---|---:|---|---:|---|---|---|
 | 叩门 | 0 | `item.armor.equip_leather` | 0.5 | 0.9 | CASTER | 起手提器 |
-| 叩门 | 900 / 1250 | `entity.player.attack.weak` | 0.5 | 0.8 ±0.05 | CASTER | 挥风 |
-| 叩门 | 900 / 1250 | `entity.player.attack.knockback` | 0.7 | 0.9 ±0.05 | TARGET | 前两下轻敲 |
-| 叩门 | 1700 | `entity.player.attack.weak` | 0.6 | 0.7 ±0.05 | CASTER | 挥风 |
-| 叩门 | 1700 | `entity.player.attack.knockback` | 1 | 0.6 ±0.05 | TARGET | 末一下重敲 |
+| 叩门 | 450 / 800 | `entity.player.attack.weak` | 0.5 | 0.8 ±0.05 | CASTER | 挥风 |
+| 叩门 | 450 / 800 | `entity.player.attack.knockback` | 0.7 | 0.9 ±0.05 | TARGET | 前两下轻敲 |
+| 叩门 | 1250 | `entity.player.attack.weak` | 0.6 | 0.7 ±0.05 | CASTER | 挥风 |
+| 叩门 | 1250 | `entity.player.attack.knockback` | 1 | 0.6 ±0.05 | TARGET | 末一下重敲 |
 | 破门 | 0 | `item.armor.equip_leather` | 0.6 | 0.8 | CASTER | 举斧 |
-| 破门 | 850 | `block.stone.step` | 0.5 | 0.9 | CASTER | 踏步 |
-| 破门 | 3200 | `entity.player.attack.sweep` | 0.8 | 0.7 ±0.05 | CASTER | 劈风 |
-| 破门 | 3200 | `entity.player.attack.strong` | 1 | 0.8 ±0.05 | TARGET | 劈中 |
-| 破门 | 4500 | `block.stone.step` | 0.4 | 0.9 | CASTER | 收步 |
+| 破门 | 450 | `block.stone.step` | 0.5 | 0.9 | CASTER | 踏步 |
+| 破门 | 1600 | `entity.player.attack.sweep` | 0.8 | 0.7 ±0.05 | CASTER | 劈风 |
+| 破门 | 1600 | `entity.player.attack.strong` | 1 | 0.8 ±0.05 | TARGET | 劈中 |
+| 破门 | 2900 | `block.stone.step` | 0.4 | 0.9 | CASTER | 收步 |
 | 撞门 | 0 | `item.armor.equip_leather` | 0.5 | 0.8 | CASTER | 起手 |
-| 撞门 | 1550 / 1800 / 2050 | `block.stone.step` | 0.7 | 0.8 / 0.85 / 0.9 ±0.05 | CASTER | 三步冲刺 |
-| 撞门 | 2400 | `entity.player.attack.knockback` | 1 | 0.55 ±0.05 | TARGET | 肩撞 |
-| 撞门 | 3650 | `block.stone.step` | 0.4 | 0.9 | CASTER | 收步 |
+| 撞门 | 800 / 1050 / 1300 | `block.stone.step` | 0.7 | 0.8 / 0.85 / 0.9 ±0.05 | CASTER | 三步冲刺 |
+| 撞门 | 1650 | `entity.player.attack.knockback` | 1 | 0.55 ±0.05 | TARGET | 肩撞 |
+| 撞门 | 2900 | `block.stone.step` | 0.4 | 0.9 | CASTER | 收步 |
 | 破盾 | 0 | `item.armor.equip_leather` | 0.5 | 0.9 | CASTER | 起手 |
-| 破盾 | 800 | `block.stone.step` | 0.4 | 0.9 | CASTER | 踏步 |
-| 破盾 | 2050 | `entity.player.attack.weak` | 0.6 | 0.7 ±0.05 | CASTER | 挥风 |
-| 破盾 | 2050 | `entity.player.attack.strong` | 0.9 | 0.9 ±0.05 | TARGET | 命中 |
-| 破盾 | 2400 / 3200 | `block.stone.step` | 0.4 | 0.9 / 0.85 | CASTER | 收步 |
+| 破盾 | 400 | `block.stone.step` | 0.4 | 0.9 | CASTER | 踏步 |
+| 破盾 | 1050 | `entity.player.attack.weak` | 0.6 | 0.7 ±0.05 | CASTER | 挥风 |
+| 破盾 | 1050 | `entity.player.attack.strong` | 0.9 | 0.9 ±0.05 | TARGET | 命中 |
+| 破盾 | 1400 / 2200 | `block.stone.step` | 0.4 | 0.9 / 0.85 | CASTER | 收步 |
 | 横扫 | 0 | `item.armor.equip_leather` | 0.6 | 0.8 | CASTER | 起手 |
-| 横扫 | 800 | `block.stone.step` | 0.4 | 0.9 | CASTER | 踏步 |
-| 横扫 | 3350 | `entity.player.attack.sweep` | 0.7 | 0.9 ±0.05 | CASTER | 第一扫 |
-| 横扫 | 3350 | `entity.player.attack.strong` | 0.8 | 0.9 ±0.05 | TARGET | 第一扫命中 |
-| 横扫 | 3700 | `entity.player.attack.sweep` | 0.9 | 0.75 ±0.05 | CASTER | 第二扫 |
-| 横扫 | 3700 | `entity.player.attack.strong` | 1 | 0.8 ±0.05 | TARGET | 第二扫命中 |
-| 横扫 | 4300 | `block.stone.step` | 0.4 | 0.9 | CASTER | 收步 |
+| 横扫 | 400 | `block.stone.step` | 0.4 | 0.9 | CASTER | 踏步 |
+| 横扫 | 1700 | `entity.player.attack.sweep` | 0.7 | 0.9 ±0.05 | CASTER | 第一扫 |
+| 横扫 | 1700 | `entity.player.attack.strong` | 0.8 | 0.9 ±0.05 | TARGET | 第一扫命中 |
+| 横扫 | 2050 | `entity.player.attack.sweep` | 0.9 | 0.75 ±0.05 | CASTER | 第二扫 |
+| 横扫 | 2050 | `entity.player.attack.strong` | 1 | 0.8 ±0.05 | TARGET | 第二扫命中 |
+| 横扫 | 2650 | `block.stone.step` | 0.4 | 0.9 | CASTER | 收步 |
 | 掩门 | 0 | `item.armor.equip_leather` | 0.5 | 0.9 | CASTER | 起手 |
-| 掩门 | 750 / 1050 | `block.stone.step` | 0.6 | 0.9 / 0.95 ±0.05 | CASTER | 两次后撤蹬地 |
-| 掩门 | 2600 | `entity.player.attack.weak` | 0.6 | 0.8 ±0.05 | CASTER | 挥风 |
-| 掩门 | 2600 | `entity.player.attack.strong` | 0.9 | 0.9 ±0.05 | TARGET | 命中 |
-| 掩门 | 3450 | `block.stone.step` | 0.4 | 0.9 | CASTER | 收步 |
+| 掩门 | 450 / 750 | `block.stone.step` | 0.6 | 0.9 / 0.95 ±0.05 | CASTER | 两次后撤蹬地 |
+| 掩门 | 2300 | `entity.player.attack.weak` | 0.6 | 0.8 ±0.05 | CASTER | 挥风 |
+| 掩门 | 2300 | `entity.player.attack.strong` | 0.9 | 0.9 ±0.05 | TARGET | 命中 |
+| 掩门 | 3150 | `block.stone.step` | 0.4 | 0.9 | CASTER | 收步 |
 | 连门 | 0 | `item.armor.equip_leather` | 0.6 | 0.8 | CASTER | 起手 |
-| 连门 | 1550 / 3050 / 4850 | `block.stone.step` | 0.6 / 0.6 / 0.7 | 0.9 / 0.9 / 0.85 ±0.05 | CASTER | 三次前冲 |
-| 连门 | 1700 / 3200 / 5000 | `entity.player.attack.sweep` | 0.7 / 0.7 / 0.9 | 0.9 / 0.85 / 0.75 ±0.05 | CASTER | 三刀劈风 |
-| 连门 | 1700 / 3200 / 5000 | `entity.player.attack.strong` | 0.8 / 0.9 / 1 | 0.95 / 0.9 / 0.8 ±0.05 | TARGET | 三刀命中 |
-| 连门 | 6350 | `block.stone.step` | 0.4 | 0.9 | CASTER | 收步 |
-| 万门一斩 | 0 | `item.armor.equip_leather` | 0.7 | 0.7 | CASTER | 起手（承接时从 1500 ms 起，不响） |
-| 万门一斩 | 1850 | `block.stone.step` | 0.5 | 0.9 | CASTER | 踏步 |
-| 万门一斩 | 2300 | `entity.player.attack.weak` | 0.6 | 0.8 ±0.05 | CASTER | 前荡挥风 |
-| 万门一斩 | 2300 | `entity.player.attack.strong` | 0.7 | 1 ±0.05 | TARGET | 前荡命中 |
-| 万门一斩 | 4050 | `entity.rabbit.jump` | 1 | 0.55 | CASTER | 跃起 |
-| 万门一斩 | 4700 | `block.stone.step` | 0.7 | 0.8 | CASTER | 落地 |
-| 万门一斩 | 4850 | `entity.player.attack.sweep` | 1 | 0.6 ±0.05 | CASTER | 重劈劈风 |
-| 万门一斩 | 4850 | `entity.player.attack.strong` | 1 | 0.7 ±0.05 | TARGET | 重劈命中 |
-| 万门一斩 | 6550 | `block.stone.step` | 0.4 | 0.9 | CASTER | 收步 |
+| 连门 | 800 / 2300 / 4100 | `block.stone.step` | 0.6 / 0.6 / 0.7 | 0.9 / 0.9 / 0.85 ±0.05 | CASTER | 三次前冲 |
+| 连门 | 950 / 2450 / 4250 | `entity.player.attack.sweep` | 0.7 / 0.7 / 0.9 | 0.9 / 0.85 / 0.75 ±0.05 | CASTER | 三刀劈风 |
+| 连门 | 950 / 2450 / 4250 | `entity.player.attack.strong` | 0.8 / 0.9 / 1 | 0.95 / 0.9 / 0.8 ±0.05 | TARGET | 三刀命中 |
+| 连门 | 5600 | `block.stone.step` | 0.4 | 0.9 | CASTER | 收步 |
+| 万门一斩 | 0 | `item.armor.equip_leather` | 0.7 | 0.7 | CASTER | 起手（承接时从 600 ms 起，不响） |
+| 万门一斩 | 850 | `block.stone.step` | 0.5 | 0.9 | CASTER | 踏步 |
+| 万门一斩 | 1200 | `entity.player.attack.weak` | 0.6 | 0.8 ±0.05 | CASTER | 前荡挥风 |
+| 万门一斩 | 1200 | `entity.player.attack.strong` | 0.7 | 1 ±0.05 | TARGET | 前荡命中 |
+| 万门一斩 | 2100 | `entity.rabbit.jump` | 1 | 0.55 | CASTER | 跃起 |
+| 万门一斩 | 2750 | `block.stone.step` | 0.7 | 0.8 | CASTER | 落地 |
+| 万门一斩 | 2900 | `entity.player.attack.sweep` | 1 | 0.6 ±0.05 | CASTER | 重劈劈风 |
+| 万门一斩 | 2900 | `entity.player.attack.strong` | 1 | 0.7 ±0.05 | TARGET | 重劈命中 |
+| 万门一斩 | 4600 | `block.stone.step` | 0.4 | 0.9 | CASTER | 收步 |
 
-承接时从 `start_millis` 起播，之前的效果（含 0 ms 的起手声）不执行：叩门承撞门 300 ms，破门、破盾承叩门 400 ms，
-撞门承掩门 400 ms，横扫承叩门 500 ms，万门一斩承破门或连门 1500 ms。各式第一个非 0 ms 的声音都晚于这些时刻，
+承接时从 `start_millis` 起播，之前的效果（含 0 ms 的起手声）不执行：叩门承撞门 100 ms，破门、破盾承叩门 200 ms，
+撞门承掩门 200 ms，横扫承叩门 200 ms，万门一斩承破门或连门 600 ms。各式第一个非 0 ms 的声音都晚于这些时刻，
 所以连招里只省掉起手声。
 
 ## 当前限制

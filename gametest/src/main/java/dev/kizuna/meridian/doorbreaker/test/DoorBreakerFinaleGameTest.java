@@ -6,11 +6,11 @@ import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import java.util.List;
 
-/** 万门一斩两刀：2.3 秒前荡轻击与 4.85 秒落地重劈，以及起手被僵直打断时的结算。 */
+/** 万门一斩两刀：1.2 秒前荡轻击与 2.9 秒落地重劈，以及起手被僵直打断时的结算。 */
 public final class DoorBreakerFinaleGameTest {
-    private static final long SWING_MILLIS = 2300;
-    private static final long CLEAVE_MILLIS = 4850;
-    private static final long INTERRUPT_MILLIS = 2500;
+    private static final long SWING_MILLIS = 1200;
+    private static final long CLEAVE_MILLIS = 2900;
+    private static final long INTERRUPT_MILLIS = 1400;
     private static final double SWING_MULTIPLIER = 0.8;
     private static final double CLEAVE_MULTIPLIER = 2.5;
     private static final double RATIO_TOLERANCE = 0.001;
@@ -45,7 +45,7 @@ public final class DoorBreakerFinaleGameTest {
 
     @GameTest(maxTicks = TEST_TICKS)
     public void staggerInWarmupKeepsTheSwingAndDropsTheCleave(GameTestHelper context) {
-        // 起手 2.5 秒被僵直打断：已结算的轻击不撤销，此后不再出落地重劈。
+        // 起手 1.4 秒被僵直打断：已结算的轻击不撤销，此后不再出落地重劈。
         FinaleRun run = FinaleRun.start(context, NEAR_DISTANCE, FAR_DISTANCE);
         long interruptTick = run.tickAt(INTERRUPT_MILLIS);
         long afterCleave = run.tickAt(CLEAVE_MILLIS) + SETTLE_TICKS;
@@ -53,7 +53,7 @@ public final class DoorBreakerFinaleGameTest {
             long tick = run.advance();
             if (tick == interruptTick) {
                 CastPhase phase = run.interrupt();
-                context.assertTrue(phase == CastPhase.INTERRUPTED, "起手 2.5 秒没有被僵直打断：" + phase);
+                context.assertTrue(phase == CastPhase.INTERRUPTED, "起手 1.4 秒没有被僵直打断：" + phase);
                 run.assertLosses(context, run.swingDose(), NO_LOSS, "打断时");
             }
             if (tick == afterCleave) {

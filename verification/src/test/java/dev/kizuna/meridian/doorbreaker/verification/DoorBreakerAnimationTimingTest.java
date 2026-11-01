@@ -19,11 +19,11 @@ public final class DoorBreakerAnimationTimingTest {
             "kizuna_players_animation");
     private static final long MILLIS_PER_SECOND = 1000;
     private static final long TICK_MILLIS = 50;
-    private static final long RAM_START_MILLIS = 1550;
-    private static final long RAM_END_MILLIS = 2250;
-    private static final List<Long> RAM_IMPULSES = List.of(RAM_START_MILLIS, 1800L, 2050L);
+    private static final long RAM_START_MILLIS = 800;
+    private static final long RAM_END_MILLIS = 1500;
+    private static final List<Long> RAM_IMPULSES = List.of(RAM_START_MILLIS, 1050L, 1300L);
     private static final Map<String, List<Long>> HITS = Map.of(
-            "knock", List.of(900L, 1250L, 1700L), "cleave", List.of(3200L), "ram", List.of(2400L));
+            "knock", List.of(450L, 800L, 1250L), "cleave", List.of(1600L), "ram", List.of(1650L));
     private static final String CLIP_PREFIX = "animation.kizuna_players_animation.player.";
 
     @Test

@@ -38,10 +38,10 @@ public final class DoorBreakerCatalogTest {
             "knock", 3.0, "cleave", 8.0, "ram", 8.0, "hook", 8.0,
             "sweep", 10.0, "close", 8.0, "chain", 18.0, "finale", 30.0);
     private static final int WORKING_LEG_COUNT = 6;
-    private static final List<Long> KNOCK_HITS = List.of(900L, 1250L, 1700L);
+    private static final List<Long> KNOCK_HITS = List.of(450L, 800L, 1250L);
     private static final List<Double> KNOCK_MULTIPLIERS = List.of(0.3, 0.3, 0.9);
     private static final double KNOCK_TOTAL_MULTIPLIER = 1.5;
-    private static final List<Long> FINALE_HITS = List.of(2300L, 4850L);
+    private static final List<Long> FINALE_HITS = List.of(1200L, 2900L);
     private static final List<Double> FINALE_MULTIPLIERS = List.of(0.8, 2.5);
     private static final List<Double> FINALE_DISTANCES = List.of(2.5, 4.0);
     private static final List<Double> FINALE_ANGLES = List.of(60.0, 90.0);
