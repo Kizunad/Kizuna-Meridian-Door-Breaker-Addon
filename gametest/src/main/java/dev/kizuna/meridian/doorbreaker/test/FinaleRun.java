@@ -52,6 +52,15 @@ final class FinaleRun implements TechniqueHost {
     private static final long TICK_MILLIS = 50;
     private static final String BOOK = "meridian_door_breaker:door_breaker";
     private static final String CAST_ID = "finale_gametest";
+    // 终式测试里施放者一直站在地上，移动事实按功法库 inspect 契约显式给出。
+    private static final TechniqueMessages.TechniqueHostFacts STANDING =
+            TechniqueMessages.TechniqueHostFacts.newBuilder()
+                    .setGrounded(true)
+                    .setInWater(false)
+                    .setClimbing(false)
+                    .setRiding(false)
+                    .setGliding(false)
+                    .build();
     private static final String ACTION_INSTANCE_ID = "technique."
             + HexFormat.of().formatHex(CAST_ID.getBytes(StandardCharsets.US_ASCII));
     private static final String DAMAGE_NAMESPACE = "meridian_door_breaker";
@@ -171,7 +180,7 @@ final class FinaleRun implements TechniqueHost {
     @Override
     public Inspection inspect() {
         // 每次检视返回当前快照与空手结构，出手手位已固定在施放记录里。
-        return new Inspection(BodyProtobuf.fromMessage(body), DoorBreakerGameTest.emptyHands());
+        return new Inspection(BodyProtobuf.fromMessage(body), DoorBreakerGameTest.emptyHands(), STANDING);
     }
 
     @Override
