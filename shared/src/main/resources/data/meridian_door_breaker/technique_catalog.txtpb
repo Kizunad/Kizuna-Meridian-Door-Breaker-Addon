@@ -269,7 +269,7 @@ definitions {
   presentation {
     icon_id: "meridian_door_breaker:knock"
     display_name: "叩门"
-    description: "竖起手中器物，向面前的单个敌人连敲三下，前两下轻、末一下重，造成钝击。保持靠近并朝向目标使用，可衔接撞门后的收势。"
+    description: "名字叫叩门，传出来时叫人以为是登门拜访的礼数。前面两声轻笃，敲在门板上确实像个问路的客人；可这手腕还没收回去，第三下重击就砸碎了门闩，屋里人连应一声都来不及。"
   }
   movement_speed_multiplier: 0.4
   follow_up {
@@ -378,7 +378,7 @@ definitions {
   presentation {
     icon_id: "meridian_door_breaker:cleave"
     display_name: "破门"
-    description: "举起手中器物向前正劈，可伤敌；持斧或近战工具时还能劈开木门。朝向门扇使用，铁门不受影响。"
+    description: "破门斩有条规矩：遇铁门则收手。早年它刚出林地府邸，见着一座铁门便迎头正劈，结果铁斧当场崩出个指甲盖大的豁口，震得虎口渗血。自那以后，它宁可绕路，也绝不再向铁物下刀。"
   }
   movement_speed_multiplier: 0.4
   follow_up {
@@ -485,7 +485,7 @@ definitions {
   presentation {
     icon_id: "meridian_door_breaker:ram"
     display_name: "撞门"
-    description: "向目标连续冲身，随后以手中器物撞击并击退敌人。适合追近目标，可接在掩门之后。"
+    description: "“我当时死死抵着橡木门，外头脚步很轻，接着是一阵短促的风声。没等我把横木压紧，整堵门板就带着灰尘撞在我胸口上，连人带门倒飞进屋里，眼见着那柄灰铁斧的影子盖过了油灯。”"
   }
   movement_speed_multiplier: 0.4
   follow_up {
@@ -584,7 +584,7 @@ definitions {
   presentation {
     icon_id: "meridian_door_breaker:hook"
     display_name: "破盾"
-    description: "向面前敌人的盾侧钩拽，按所持器物的类别处理破盾。持斧对付举盾敌人更有利，可衔接叩门。"
+    description: "那个举盾的逃兵在狭窄甬道里挡了它半宿。正面直劈劈上去全被滑开，震得它臂膀发麻。天快亮时它扔下豁口的铁斧，盯着那面厚木盾看了许久，忽然伸手摸向斧背倒弯的尖角。"
   }
   movement_speed_multiplier: 0.4
   follow_up {
@@ -702,7 +702,7 @@ definitions {
   presentation {
     icon_id: "meridian_door_breaker:sweep"
     display_name: "横扫"
-    description: "转身挥扫前后两侧，攻击周围多个敌人。起手较长，受伤可被打断，适合提前迎击包围。"
+    description: "有人说是在三层大厅遭了七只僵尸合围，有人说是在窄走廊撞上了巡逻队，有的咬定是大雨夜，有的说是正午。谁也争不出头绪，只有府邸一楼圆木立柱上那圈齐腰深的长长砍痕，一直留到现在。"
   }
   movement_speed_multiplier: 0.4
   follow_up {
@@ -811,7 +811,7 @@ definitions {
   presentation {
     icon_id: "meridian_door_breaker:close"
     display_name: "掩门"
-    description: "按移动输入方向连续撤步，随后反击面前的敌人。没有方向输入时向后退，可用来拉开距离。"
+    description: "学斧的后辈曾怯生生地问：“杀得正顺，为何偏要往后退半步？”它擦着斧面上的灰，只回了一句：“把门关上一半，门缝里的狗才咬不着你。”"
   }
   movement_speed_multiplier: 0.4
 }
@@ -966,7 +966,7 @@ definitions {
   presentation {
     icon_id: "meridian_door_breaker:chain"
     display_name: "连门"
-    description: "向前连进并连续挥击，以多段攻击追压敌人。留意整式的真元消耗与收势时间。"
+    description: "西岭府邸巡查簿载：某年霜月十七夜，东翼回廊计一十四门。自北首第一扇起，至南端藏宝库止，门扇皆中分碎裂。步印连贯无停滞，斧痕间距三尺二寸，耗时不过三十息。"
   }
   movement_speed_multiplier: 0.4
 }
@@ -1125,7 +1125,7 @@ definitions {
   presentation {
     icon_id: "meridian_door_breaker:finale"
     display_name: "万门一斩"
-    description: "先把手中器物向身前荡出一记轻击，再蓄势跃起向前突进，以强力斩击收尾。起手较长，适合看准空隙再发动。"
+    description: "后人找到那扇倒塌的红木门时，门框早已朽烂。木板正面横着一道两寸浅痕，似是随手虚扫，紧接着从门楣正中垂直贯下一道深不见底的裂口。中间借力的身法究竟如何腾挪，至今无人能补全。"
   }
   movement_speed_multiplier: 0.4
   follow_up {
