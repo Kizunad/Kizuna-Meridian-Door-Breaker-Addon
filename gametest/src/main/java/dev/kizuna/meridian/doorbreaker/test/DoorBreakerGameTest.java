@@ -15,6 +15,7 @@ import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.HandSide;
 import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.HeldItem;
 import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.HeldItems;
 import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.TechniqueActivityCommit;
+import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.TechniqueHostFacts;
 import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.TechniqueHostRequest;
 import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.TechniqueHostResponse;
 import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.TechniqueProgress;
@@ -219,6 +220,17 @@ public final class DoorBreakerGameTest implements TechniqueHostEntrypoint {
                 .build();
     }
 
+    static TechniqueHostFacts standing() {
+        // 宿主检视必须带移动事实；测试里的玩家一直站在地上，按功法库 inspect 契约显式给出。
+        return TechniqueHostFacts.newBuilder()
+                .setGrounded(true)
+                .setInWater(false)
+                .setClimbing(false)
+                .setRiding(false)
+                .setGliding(false)
+                .build();
+    }
+
     private static final class MemoryTechniqueHost implements TechniqueHostEntrypoint {
         private final UUID entityId;
         private BodySnapshot body;
@@ -246,9 +258,10 @@ public final class DoorBreakerGameTest implements TechniqueHostEntrypoint {
         }
 
         private byte[] inspect(String requestId) {
-            // 每次读取返回相同 revision 的权威快照与空手状态。
+            // 每次读取返回相同 revision 的权威快照、空手状态与站立事实。
             var result = response(requestId).toBuilder()
                     .setBody(body)
+                    .setInspectFacts(standing())
                     .build();
             return TechniqueProtocol.encodeHostResponse(result);
         }
