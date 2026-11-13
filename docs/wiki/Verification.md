@@ -14,6 +14,9 @@
 - GameTest 由真实 Fabric 元数据发现目录、读取 Human 导出的模板资源，使用启动后的 `TechniqueFabric.service()` 检查下卷前置拒绝与整卷学习，并检查静态 `block_items` 标签覆盖注册表中的 BlockItem。
 - `DoorBreakerGameTest.upperScrollLearnsAllThreeTechniques` 从真实物品注册表获取上卷，
   经服务端玩家右键入口学会精确三式，并验证生存模式消耗卷轴。
+- `DoorBreakerScrollDropGameTest.vindicatorsDropOnlyTheVolumesTheyKnow` 用内存宿主让三只原版卫道士分别会三卷、只会上卷、
+  一卷不会，各按原版卫道士掉落表抽 200 次玩家击杀：会的卷各掉 25～75 次（0.25 的正负四个标准差），不会的卷一次不掉；
+  不是玩家打死的不掉。`DoorBreakerCatalogTest` 另查三卷各只向卫道士声明一项 0.25 的掉落。
 - `DoorBreakerFinaleGameTest` 用内存宿主写入一次承接起手的万门一斩，逐 tick 走功法库真实的施放状态机与调度器，
   再由真实世界执行器让持铁斧的卫道士出刀，目标是身前 2 格、3 格的两头牛：
   1.2 秒只有近处的牛受一次 ×0.8 剂量，2.9 秒两头牛再各受一次 ×2.5 剂量；

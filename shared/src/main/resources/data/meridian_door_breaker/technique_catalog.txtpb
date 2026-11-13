@@ -92,6 +92,8 @@ volumes {
   techniques { id: "meridian_door_breaker:knock" version: 1 }
   techniques { id: "meridian_door_breaker:cleave" version: 1 }
   techniques { id: "meridian_door_breaker:ram" version: 1 }
+  # 生存来源：玩家亲手杀死会这一卷的卫道士（Threatening 学卷表的游炁、真炁两档）时掉一卷，概率占位。
+  scroll_drops { entity_type: "minecraft:vindicator" chance: 0.25 }
 }
 volumes {
   id: "meridian_door_breaker:middle"
@@ -101,6 +103,8 @@ volumes {
   techniques { id: "meridian_door_breaker:sweep" version: 1 }
   techniques { id: "meridian_door_breaker:close" version: 1 }
   prerequisite_volume_ids: "meridian_door_breaker:upper"
+  # 生存来源同上卷；学卷表里只有真炁卫道士会中卷。
+  scroll_drops { entity_type: "minecraft:vindicator" chance: 0.25 }
 }
 volumes {
   id: "meridian_door_breaker:lower"
@@ -109,6 +113,8 @@ volumes {
   techniques { id: "meridian_door_breaker:chain" version: 1 }
   techniques { id: "meridian_door_breaker:finale" version: 1 }
   prerequisite_volume_ids: "meridian_door_breaker:middle"
+  # 生存来源同上卷；学卷表里只有一成真炁卫道士会下卷，所以下卷最难得。
+  scroll_drops { entity_type: "minecraft:vindicator" chance: 0.25 }
 }
 
 definitions {

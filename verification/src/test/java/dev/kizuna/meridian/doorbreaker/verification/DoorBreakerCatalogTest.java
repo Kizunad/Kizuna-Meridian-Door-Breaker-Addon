@@ -4,6 +4,7 @@ import dev.kizuna.meridian.human.server.HumanContent;
 import dev.kizuna.meridian.protocol.pb.BodyMessages.QiPhase;
 import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.QiCostMatching;
 import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.QiDistribution;
+import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.ScrollDrop;
 import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.StrikeShape;
 import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.TechniqueDefinition;
 import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.TechniqueEffect;
@@ -34,6 +35,8 @@ public final class DoorBreakerCatalogTest {
     private static final String UPPER_ID = NAMESPACE + ":upper";
     private static final String MIDDLE_ID = NAMESPACE + ":middle";
     private static final String LOWER_ID = NAMESPACE + ":lower";
+    private static final String DROPPED_BY = "minecraft:vindicator";
+    private static final double SCROLL_DROP_CHANCE = 0.25;
     private static final Map<String, Double> TOTAL_QI_COSTS = Map.of(
             "knock", 3.0, "cleave", 8.0, "ram", 8.0, "hook", 8.0,
             "sweep", 10.0, "close", 8.0, "chain", 18.0, "finale", 30.0);
@@ -266,5 +269,18 @@ public final class DoorBreakerCatalogTest {
             latestCurveEnd = Math.max(latestCurveEnd, end);
         }
         assertTrue(latestCurveEnd <= cooldownEnd);
+    }
+
+    @Test
+    public void everyVolumeDropsOnlyFromVindicatorsKilledByPlayers() throws IOException {
+        // 生存来源：三卷都只向卫道士声明一项，概率占位；死者会不会这一卷由 Threatening 学卷表决定。
+        TechniqueRegistry registry = DoorBreakerCatalog.registry(DoorBreakerCatalog.load());
+        ScrollDrop drop = ScrollDrop.newBuilder()
+                .setEntityType(DROPPED_BY)
+                .setChance(SCROLL_DROP_CHANCE)
+                .build();
+        for (var volume : registry.volumes()) {
+            assertEquals(volume.getId(), List.of(drop), volume.getScrollDropsList());
+        }
     }
 }

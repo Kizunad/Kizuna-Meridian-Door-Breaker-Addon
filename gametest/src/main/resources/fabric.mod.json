@@ -10,7 +10,8 @@
   "entrypoints": {
     "fabric-gametest": [
       "dev.kizuna.meridian.doorbreaker.test.DoorBreakerGameTest",
-      "dev.kizuna.meridian.doorbreaker.test.DoorBreakerFinaleGameTest"
+      "dev.kizuna.meridian.doorbreaker.test.DoorBreakerFinaleGameTest",
+      "dev.kizuna.meridian.doorbreaker.test.DoorBreakerScrollDropGameTest"
     ],
     "meridian_technique_host": ["dev.kizuna.meridian.doorbreaker.test.DoorBreakerGameTest"]
   },

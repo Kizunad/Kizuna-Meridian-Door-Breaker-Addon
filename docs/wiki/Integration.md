@@ -29,6 +29,11 @@
 短名来自 `assets/meridian_door_breaker/lang/`，沿用原目录设计的叩门、破门、撞门、破盾、横扫、掩门、连门、万门一斩。
 右键调用功法库按卷学习：成功生存消耗一个，创造不消耗；缺前置、重复学习、无身体等失败不消耗。
 
+生存来源：三卷都声明了 `scroll_drops { entity_type: "minecraft:vindicator" chance: 0.25 }`，
+功法库据此往原版卫道士掉落表各加一池。玩家亲手杀死、且死者会这一整卷时按 0.25 掉一卷，不是玩家打死的不掉。
+死者会哪几卷由 Threatening 学卷表决定：游炁、真炁卫道士都会上卷，只有真炁会中卷，一成真炁会下卷，越往下越难得。
+0.25 是占位概率，与唤魔者掉《养》相同。
+
 专用图标约定为 `assets/meridian_door_breaker/textures/item/<upper|middle|lower>_scroll.png`，
 本仓提供三卷专属图标，资源与尺寸见[美术资源](Art.md)。
 阅读背景约定为 `assets/meridian_door_breaker/textures/gui/scroll/<upper|middle|lower>.png`，
