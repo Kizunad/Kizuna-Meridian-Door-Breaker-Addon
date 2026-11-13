@@ -1,5 +1,6 @@
 {
   "book.meridian_door_breaker.door_breaker": "破门斩",
+  "book.meridian_door_breaker.door_breaker.note": "宜持斧，剑和工具打八折，两手空空放不出；每式磨一次兵刃；只劈木门、木活板门和栅栏门",
   "volume.meridian_door_breaker.upper": "上卷·木门",
   "item.meridian_door_breaker.upper_scroll": "破门斩·上卷·木门",
   "volume.meridian_door_breaker.middle": "中卷·铁门",
@@ -7,11 +8,19 @@
   "volume.meridian_door_breaker.lower": "下卷·万门",
   "item.meridian_door_breaker.lower_scroll": "破门斩·下卷·万门",
   "technique.meridian_door_breaker.knock": "叩门",
+  "technique.meridian_door_breaker.knock.note": "连敲三下；后面可接破门、破盾、横扫",
   "technique.meridian_door_breaker.cleave": "破门",
+  "technique.meridian_door_breaker.cleave.note": "重劈一下，顺带劈开面前两格内的门；后面可接万门一斩",
   "technique.meridian_door_breaker.ram": "撞门",
+  "technique.meridian_door_breaker.ram.note": "冲上去撞一下，把人撞退；后面可接叩门",
   "technique.meridian_door_breaker.hook": "破盾",
+  "technique.meridian_door_breaker.hook.note": "打在举着的盾上，斧让盾 5 秒举不起来，剑和工具 2 秒",
   "technique.meridian_door_breaker.sweep": "横扫",
+  "technique.meridian_door_breaker.sweep.note": "前后各扫半圈，3 格内最多打五个",
   "technique.meridian_door_breaker.close": "掩门",
+  "technique.meridian_door_breaker.close.note": "先后撤两步再回劈一下；后面可接撞门",
   "technique.meridian_door_breaker.chain": "连门",
-  "technique.meridian_door_breaker.finale": "万门一斩"
+  "technique.meridian_door_breaker.chain.note": "连冲三步，每步劈一下，只追一个人；后面可接万门一斩",
+  "technique.meridian_door_breaker.finale": "万门一斩",
+  "technique.meridian_door_breaker.finale.note": "只能接在破门或连门后面；先荡一刀，再跃起重劈，最多打六个，劈开面前 3 格宽的门"
 }

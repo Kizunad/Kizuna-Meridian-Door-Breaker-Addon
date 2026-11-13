@@ -1,5 +1,6 @@
 {
   "book.meridian_door_breaker.door_breaker": "Door Breaker",
+  "book.meridian_door_breaker.door_breaker.note": "Best with an axe; swords and tools hit at four fifths; empty hands cannot cast. Each form wears the weapon once. Only wooden doors, wooden trapdoors and fence gates break.",
   "volume.meridian_door_breaker.upper": "Upper Volume · Wooden Doors",
   "item.meridian_door_breaker.upper_scroll": "Door Breaker·Upper Volume · Wooden Doors",
   "volume.meridian_door_breaker.middle": "Middle Volume · Iron Doors",
@@ -7,11 +8,19 @@
   "volume.meridian_door_breaker.lower": "Lower Volume · Myriad Doors",
   "item.meridian_door_breaker.lower_scroll": "Door Breaker·Lower Volume · Myriad Doors",
   "technique.meridian_door_breaker.knock": "Knock",
+  "technique.meridian_door_breaker.knock.note": "three quick knocks; Cleave, Shield Hook or Sweep can follow",
   "technique.meridian_door_breaker.cleave": "Cleave",
+  "technique.meridian_door_breaker.cleave.note": "one heavy chop that also breaks doors within 2 blocks ahead; Myriad Doors can follow",
   "technique.meridian_door_breaker.ram": "Ram",
+  "technique.meridian_door_breaker.ram.note": "charge in and ram once, knocking the target back; Knock can follow",
   "technique.meridian_door_breaker.hook": "Shield Hook",
+  "technique.meridian_door_breaker.hook.note": "struck on a raised shield, an axe disables it for 5 s, swords and tools for 2 s",
   "technique.meridian_door_breaker.sweep": "Sweep",
+  "technique.meridian_door_breaker.sweep.note": "a half circle in front, then behind; up to five targets within 3 blocks",
   "technique.meridian_door_breaker.close": "Retreating Guard",
+  "technique.meridian_door_breaker.close.note": "two steps back, then one returning chop; Ram can follow",
   "technique.meridian_door_breaker.chain": "Chained Cuts",
-  "technique.meridian_door_breaker.finale": "Myriad Doors"
+  "technique.meridian_door_breaker.chain.note": "three lunges with a chop each, all at one target; Myriad Doors can follow",
+  "technique.meridian_door_breaker.finale": "Myriad Doors",
+  "technique.meridian_door_breaker.finale.note": "only after Cleave or Chained Cuts; a swing, then a leaping chop on up to six targets that breaks doors 3 blocks wide ahead"
 }
