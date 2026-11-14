@@ -1,0 +1,49 @@
+plugins { id 'net.fabricmc.fabric-loom' }
+
+description = '破门斩动作的真实客户端连拍：玩家经功法库公开入口逐式施放，第三人称正面每隔几 tick 拍一张，给人看动作。'
+
+dependencies {
+    // 26.x 不混淆：直接用官方名编译，模组依赖也不经重映射。
+    minecraft libs.minecraft
+    implementation libs.fabric.loader
+    implementation libs.fabric.api
+    // 正式数据包按安装 JAR 装入，和 GameTest 一样用发行包自己的资源。
+    localRuntime files(rootProject.project(':fabric').tasks.named('jar'))
+    // 施放走功法库的公开服务，身体从原版伤害桥读；类型取组合进来的功法库、Framework 和已构建的 Vanilla-Damage，
+    // 运行仍由完整装配装入一次。
+    compileOnly('dev.kizuna.meridian.technique:fabric') { transitive = false }
+    compileOnly 'dev.kizuna.meridian.technique:server'
+    compileOnly 'dev.kizuna.meridian.technique:shared'
+    compileOnly 'local.meridian:server'
+    compileOnly libs.protobuf.java
+    compileOnly files(kizunaWorkspace.artifact('vanilla-damage', 'fabric', false))
+}
+
+apply from: new File(kizunaWorkspace.directory('framework'), 'scripts/full-assembly.gradle')
+
+loom {
+    mods {
+        meridian_door_breaker_clienttest { sourceSet sourceSets.main }
+    }
+    runs {
+        clientGametest {
+            client()
+            name '破门斩动作客户端连拍'
+            runDir providers.gradleProperty('clienttestRunDir').getOrElse('build/clienttest')
+            vmArg '-Dfabric.client.gametest'
+            vmArg '-Dfabric.client.gametest.modid=meridian_door_breaker_clienttest'
+            programArgs '--width', '1280', '--height', '960'
+            // 离线玩家名决定原版默认皮肤：Player991 是 classic 宽臂。
+            programArgs '--username', providers.gradleProperty('clienttestUsername').getOrElse('Player991')
+        }
+    }
+}
+
+tasks.named('runClientGametest') {
+    doFirst {
+        // 跳过首启无障碍引导，界面用中文，与用户实例一致。
+        def runDirectory = file(providers.gradleProperty('clienttestRunDir').getOrElse('build/clienttest'))
+        runDirectory.mkdirs()
+        new File(runDirectory, 'options.txt').text = 'onboardAccessibility:false\nlang:zh_cn\n'
+    }
+}

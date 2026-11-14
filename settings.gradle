@@ -10,7 +10,7 @@ pluginManagement {
 apply from: new File(rootDir.parentFile, 'Kizuna-Meridian-Mod-Framework/scripts/workspace.gradle')
 
 rootProject.name = 'kizuna-meridian-door-breaker-addon'
-include 'shared', 'fabric', 'verification', 'gametest'
+include 'shared', 'fabric', 'verification', 'gametest', 'clienttest'
 
 // 验证工具直接使用框架、功法库与 Human 的当前源码，均以源码组合。local.meridian 是框架的本地替换键；
 // 本构建直接组合框架时以这里的规则为准，功法与 Human 的协议还需要 client。

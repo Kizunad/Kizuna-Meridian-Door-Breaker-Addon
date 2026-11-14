@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "meridian_door_breaker_clienttest",
+  "version": "1.0.0",
+  "name": "破门斩动作客户端连拍",
+  "environment": "client",
+  "entrypoints": {
+    "fabric-client-gametest": ["dev.kizuna.meridian.doorbreaker.clienttest.DoorBreakerMotionClientTest"]
+  },
+  "depends": {"fabric-api": "*", "meridian_door_breaker": "*", "meridian_technique": "*", "meridian_human_host": "*"}
+}
