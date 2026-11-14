@@ -1,0 +1,23 @@
+{
+  "parent": "meridian_progression:cultivation/cultivators",
+  "display": {
+    "icon": {
+      "id": "meridian_door_breaker:lower_scroll"
+    },
+    "title": {
+      "translate": "advancements.meridian_door_breaker.cultivators.door_breaker.title"
+    },
+    "description": {
+      "translate": "advancements.meridian_door_breaker.cultivators.door_breaker.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "completed": {
+      "trigger": "meridian_technique:book_completed",
+      "conditions": {
+        "book": "meridian_door_breaker:door_breaker"
+      }
+    }
+  }
+}

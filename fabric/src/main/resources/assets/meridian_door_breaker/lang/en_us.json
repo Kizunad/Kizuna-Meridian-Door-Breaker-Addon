@@ -22,5 +22,11 @@
   "technique.meridian_door_breaker.chain": "Chained Cuts",
   "technique.meridian_door_breaker.chain.note": "three lunges with a chop each, all at one target; Myriad Doors can follow",
   "technique.meridian_door_breaker.finale": "Myriad Doors",
-  "technique.meridian_door_breaker.finale.note": "only after Cleave or Chained Cuts; a swing, then a leaping chop on up to six targets that breaks doors 3 blocks wide ahead"
+  "technique.meridian_door_breaker.finale.note": "only after Cleave or Chained Cuts; a swing, then a leaping chop on up to six targets that breaks doors 3 blocks wide ahead",
+  "advancements.meridian_door_breaker.cultivators.door_breaker.title": "Cleaving the Way",
+  "advancements.meridian_door_breaker.cultivators.door_breaker.description": "From Knock to Myriad Doors, hewing through layered timber in full stride—no corridor, however deep, can bar the axe.",
+  "codex.intro.meridian_door_breaker.door_breaker": "A brutal axe form born in woodland mansions: hewing through door and bolt alike, staying its edge only when met with unyielding iron.",
+  "codex.power.meridian_door_breaker.upper": "A short, violent rush sends wood and foe flying together. Knocking and cleaving in turn, the axe splinters any hardwood door blocking your way.",
+  "codex.power.meridian_door_breaker.middle": "Catch heavy shields on the axe's back hook to rip them aside, slip back in a retreating guard, and sweep wide from the waist to tear through a closing ring.",
+  "codex.power.meridian_door_breaker.lower": "Drive back foes with chained cuts in a rush, leap and feint before bringing the axe straight down—mowing down the line and hewing through rows of timber doors."
 }

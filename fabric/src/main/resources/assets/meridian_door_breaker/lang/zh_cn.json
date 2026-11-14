@@ -22,5 +22,11 @@
   "technique.meridian_door_breaker.chain": "连门",
   "technique.meridian_door_breaker.chain.note": "连冲三步，每步劈一下，只追一个人；后面可接万门一斩",
   "technique.meridian_door_breaker.finale": "万门一斩",
-  "technique.meridian_door_breaker.finale.note": "只能接在破门或连门后面；先荡一刀，再跃起重劈，最多打六个，劈开面前 3 格宽的门"
+  "technique.meridian_door_breaker.finale.note": "只能接在破门或连门后面；先荡一刀，再跃起重劈，最多打六个，劈开面前 3 格宽的门",
+  "advancements.meridian_door_breaker.cultivators.door_breaker.title": "劈门开路",
+  "advancements.meridian_door_breaker.cultivators.door_breaker.description": "从木门叩击到万门一斩尽皆通晓，腾挪间连劈重重硬木，纵然再深的回廊也挡不住一斧。",
+  "codex.intro.meridian_door_breaker.door_breaker": "从林地府邸传出的刚猛斧法，连门带闩迎头破去，唯独遇着坚铁才肯绕路收手。",
+  "codex.power.meridian_door_breaker.upper": "短促迎面冲撞连人带木撞飞，手中斧刃连叩带劈，能将挡路的硬木门应声劈碎。",
+  "codex.power.meridian_door_breaker.middle": "摸熟斧背尖角专破坚实厚盾，半退掩门避险，腰间横扫一斧能砍开合围之势。",
+  "codex.power.meridian_door_breaker.lower": "疾步连劈逼退敌手，跃起虚扫复直贯砸下，扫翻身前数人并顺势劈碎重重木门。"
 }
