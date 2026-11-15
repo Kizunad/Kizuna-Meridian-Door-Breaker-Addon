@@ -1,6 +1,8 @@
 package dev.kizuna.meridian.doorbreaker.clienttest;
 
 import dev.kizuna.meridian.technique.fabric.TechniqueFabric;
+import dev.kizuna.meridian.technique.fabric.testing.RecordingConnection;
+import dev.kizuna.meridian.technique.fabric.testing.TestPlayers;
 import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.CastEntry;
 import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.CastOutcome;
 import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.CastPhases;
@@ -12,16 +14,24 @@ import dev.kizuna.meridian.vanilla.fabric.VanillaDamageFabric;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Function;
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.CameraType;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.illager.Vindicator;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -68,12 +78,40 @@ public final class DoorBreakerMotionClientTest implements FabricClientGameTest {
     private static final Vec3 MOB_VIEW = new Vec3(0.5, 1.2, 6.5);
     private static final AABB MOB_BOX = new AABB(-1, -1, -1, 1, 2, 1);
     private static final float FACING_NORTH = 180;
+    /** -PclienttestScenes=feel：只拍打击反馈那几段（劈卫道士、打尸壳、打骷髅和铁傀儡），镜头架在侧面。 */
+    private static final boolean FEEL_SCENES =
+            "feel".equals(System.getProperty("meridian.doorbreaker.clienttest.scenes"));
+    private static final List<String> PEDDLER_VOLUMES =
+            List.of("meridian_peddler:road", "meridian_peddler:ambush", "meridian_peddler:journey");
+    private static final Vec3 SIDE_CAMERA = new Vec3(4.6, 1.5, 1.6);
+    private static final double CAMERA_EYE = 1.62;
+    /** 镜头朝西看，每往前一格低这么多。 */
+    private static final double CAMERA_DROP = -0.07;
+    private static final String STRIKER_NAME = "Striker";
+    private static final String SOUND_RECORD = "sounds.tsv";
+    /** 连拍时听到的每一声：场景、第几张、声音文件、音量、音高、离镜头几格。 */
+    private static final List<String> HEARD = new CopyOnWriteArrayList<>();
+    /** 正在拍的场景和张数，没在拍时是空串。 */
+    private static volatile String filming = "";
+    /** 打击反馈那几段里出手的假玩家。 */
+    private static ServerPlayer striker;
+    private static final double WEAPON_REACH = 2.0;
+    private static final double LIMB_REACH = 1.5;
+    private static final int PUNCH_FILM_TICKS = 34;
+    private static final double MOB_ATTACK_DISTANCE = 3;
+    private static final int FIRST_PERSON_PITCH = 10;
+    private static final int MOB_ATTACK_FILM_TICKS = 160;
+    private static final List<Integer> PUNCH_TICKS = List.of(2, 16);
 
     @Override
     public void runTest(ClientGameTestContext context) {
         context.getInput().resizeWindow(WINDOW_WIDTH, WINDOW_HEIGHT);
         try (TestSingleplayerContext world = context.worldBuilder().create()) {
             Stage stage = Stage.prepare(context, world);
+            if (FEEL_SCENES) {
+                feelScenes(stage);
+                return;
+            }
             arm(stage);
             for (String move : SOLO_MOVES) {
                 solo(stage, move);
@@ -100,6 +138,138 @@ public final class DoorBreakerMotionClientTest implements FabricClientGameTest {
         stage.look(stage.at(PLAYER_FEET), stage.at(SOUTH));
         stage.onServer(server -> player(server).setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_AXE)));
         stage.camera(CameraType.THIRD_PERSON_FRONT);
+    }
+
+    private static void feelScenes(Stage stage) {
+        // 打击反馈的几段。原版在镜头不在本机玩家身上时不画本机玩家，所以出手的是另一个玩家：
+        // 功法库测试夹具里的假玩家，走正式进服入口，在客户端眼里就是别的真玩家。本机玩家当旁观者，站在侧面看。
+        stage.command("gamemode spectator @a");
+        Vec3 camera = stage.at(SIDE_CAMERA);
+        stage.look(camera.subtract(0, CAMERA_EYE, 0), camera.add(-1, CAMERA_DROP, 0));
+        stage.camera(CameraType.FIRST_PERSON);
+        stage.onServer(server -> {
+            // Human 每 tick 检查必装的接收通道，缺了会暂停身体：假玩家照本机客户端声明过的那一套报。
+            var channels = ServerPlayNetworking.getSendable((ServerPlayer) player(server));
+            striker = TestPlayers.detached(server.overworld(), STRIKER_NAME);
+            TestPlayers.logIn(striker, new RecordingConnection(channels));
+            Vec3 feet = stage.at(PLAYER_FEET);
+            striker.snapTo(feet.x, feet.y, feet.z, 0, 0);
+            striker.setGameMode(GameType.SURVIVAL);
+            striker.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_AXE));
+            // 真玩家每 tick 由自己的连接推一次（换了手里的东西要靠它广播），站没站在地上由客户端报；
+            // 假玩家的连接不在服务端的连接表里，这两样在这儿替它做。
+            ServerTickEvents.END_SERVER_TICK.register(ticking -> {
+                striker.setOnGround(true /* onGround */);
+                striker.doTick();
+            });
+        });
+        stage.settle();
+        VOLUMES.forEach(volume -> stage.command("meridian technique learn " + STRIKER_NAME + " " + volume));
+        PEDDLER_VOLUMES.forEach(volume -> stage.command("meridian technique learn " + STRIKER_NAME + " " + volume));
+        stage.command("meridian opening complete " + STRIKER_NAME + " all");
+        stage.command("meridian body realm " + STRIKER_NAME + " " + TRUE_QI);
+        stage.listen(DoorBreakerMotionClientTest::heard);
+        target(stage, "minecraft:vindicator", WEAPON_REACH);
+        filmCast(stage, "feel_cleave_vindicator", PREFIX + "cleave");
+        target(stage, "minecraft:wither_skeleton", WEAPON_REACH);
+        filmCast(stage, "feel_knock_skeleton", PREFIX + "knock");
+        target(stage, "minecraft:iron_golem", WEAPON_REACH);
+        filmCast(stage, "feel_cleave_golem", PREFIX + "cleave");
+        stage.onServer(server -> striker.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY));
+        target(stage, "minecraft:husk", LIMB_REACH);
+        filmPunches(stage, "feel_punch_husk");
+        target(stage, "minecraft:husk", LIMB_REACH);
+        filmCast(stage, "feel_kick_husk", "meridian_peddler:roundhouse");
+        filmMobAttack(stage, "feel_mob_attack");
+        filmFirstPerson(stage, "feel_first_person");
+        stage.write(SOUND_RECORD, String.join("", HEARD));
+    }
+
+    private static void heard(String sound) {
+        // 冻结着连拍录不了音：把每一声实际播出的声音记到它所在的那张画面上，事后照这份记录把音轨摆回去。
+        if (!filming.isEmpty()) {
+            HEARD.add(filming + '\t' + sound + '\n');
+        }
+    }
+
+    private static void target(Stage stage, String type, double distance) {
+        // 换一个目标：清掉上一个，在玩家正南放一只关了 AI、面朝玩家的。
+        stage.onServer(server -> server.overworld().getEntitiesOfClass(Mob.class,
+                MOB_BOX.inflate(8).move(stage.at(PLAYER_FEET))).forEach(Entity::discard));
+        Vec3 feet = stage.at(PLAYER_FEET.add(0, 0, distance));
+        stage.command(String.format(Locale.ROOT,
+                "summon %s %.2f %.2f %.2f {NoAI:1b,PersistenceRequired:1b,Rotation:[180f,0f]}",
+                type, feet.x, feet.y, feet.z));
+        stage.settle();
+    }
+
+    private static void filmFirstPerson(Stage stage, String scene) {
+        // 第一人称自己劈一下：假玩家退成旁观者，本机玩家回到生存、学好功法、拿斧子站到原点，镜头就在自己眼睛里。
+        String self = "@a[name=!" + STRIKER_NAME + "]";
+        stage.onServer(server -> striker.setGameMode(GameType.SPECTATOR));
+        stage.command("gamemode survival " + self);
+        VOLUMES.forEach(volume -> stage.command("meridian technique learn " + self + " " + volume));
+        stage.command("meridian opening complete " + self + " all");
+        stage.command("meridian body realm " + self + " " + TRUE_QI);
+        Vec3 feet = stage.at(PLAYER_FEET);
+        stage.command(String.format(Locale.ROOT, "tp %s %.3f %.3f %.3f 0 %d", self, feet.x, feet.y, feet.z,
+                FIRST_PERSON_PITCH));
+        stage.onServer(server -> player(server).setItemInHand(InteractionHand.MAIN_HAND,
+                new ItemStack(Items.IRON_AXE)));
+        target(stage, "minecraft:vindicator", WEAPON_REACH);
+        filmCast(stage, scene, PREFIX + "cleave", DoorBreakerMotionClientTest::player);
+    }
+
+    private static void filmCast(Stage stage, String scene, String technique) {
+        filmCast(stage, scene, technique, server -> striker);
+    }
+
+    private static void filmCast(Stage stage, String scene, String technique,
+                                 Function<MinecraftServer, LivingEntity> caster) {
+        // 养好身体、冻结、起手，从起手拍到收势以后。
+        refill(stage);
+        int castTicks = ticks(castMillis(stage.computeOnServer(server ->
+                TechniqueFabric.service().registry().findLatest(technique).orElseThrow().getPhases())));
+        stage.command("tick freeze");
+        stage.onServer(server -> castId(caster.apply(server), technique, CastEntry.AUTO));
+        film(stage, scene, 0, castTicks + AFTER_MOVE_TICKS);
+        stage.command("tick unfreeze");
+        stage.pause(BETWEEN_MOVES_TICKS);
+    }
+
+    private static void filmPunches(Stage stage, String scene) {
+        // 空手用原版攻击打两拳：看空手的风痕和溅血。
+        stage.command("tick freeze");
+        int filmed = 0;
+        for (int punch : PUNCH_TICKS) {
+            film(stage, scene, filmed, punch - filmed);
+            filmed = punch;
+            stage.onServer(server -> {
+                var mobs = server.overworld().getEntitiesOfClass(Mob.class,
+                        MOB_BOX.inflate(4).move(striker.position()));
+                striker.attack(mobs.getFirst());
+                striker.swing(InteractionHand.MAIN_HAND, true /* updateSelf */);
+                striker.resetAttackStrengthTicker();
+            });
+        }
+        film(stage, scene, filmed, PUNCH_FILM_TICKS - filmed);
+        stage.command("tick unfreeze");
+        stage.pause(BETWEEN_MOVES_TICKS);
+    }
+
+    private static void filmMobAttack(Stage stage, String scene) {
+        // 生物挥兵器也有风痕：生一只真炁卫道士，留着 AI，让它自己对出手的玩家放招。先冻结再生，免得没开拍它就动手。
+        stage.onServer(server -> server.overworld().getEntitiesOfClass(Mob.class,
+                MOB_BOX.inflate(8).move(stage.at(PLAYER_FEET))).forEach(Entity::discard));
+        refill(stage);
+        stage.command("tick freeze");
+        Vec3 feet = stage.at(PLAYER_FEET.add(0, 0, MOB_ATTACK_DISTANCE));
+        stage.command(String.format(Locale.ROOT, "meridian humanoid spawn minecraft:vindicator %s %.2f %.2f %.2f",
+                TRUE_QI, feet.x, feet.y, feet.z));
+        stage.settle();
+        film(stage, scene, 0, MOB_ATTACK_FILM_TICKS);
+        stage.command("tick unfreeze");
+        stage.pause(BETWEEN_MOVES_TICKS);
     }
 
     private static void refill(Stage stage) {
@@ -206,10 +376,12 @@ public final class DoorBreakerMotionClientTest implements FabricClientGameTest {
     private static void film(Stage stage, String scene, int firstFrame, int ticks) {
         // 游戏已经冻结：每次只放行一个 tick，等它的包到了再拍，所以一张正好是一个游戏 tick，截图多慢都不会错位。
         for (int frame = firstFrame + 1; frame <= firstFrame + ticks; frame++) {
+            filming = String.format(Locale.ROOT, "%s\t%d", scene, frame);
             stage.command("tick step 1");
             stage.pause(STEP_SETTLE_TICKS);
             stage.shoot(String.format(Locale.ROOT, "film_%s_%03d", scene, frame));
         }
+        filming = "";
     }
 
     private static void staggerShots(Stage stage, String scene) {
@@ -247,8 +419,13 @@ public final class DoorBreakerMotionClientTest implements FabricClientGameTest {
     }
 
     private static void cast(LivingEntity caster, String move, CastEntry entry) {
+        castId(caster, PREFIX + move, entry);
+    }
+
+    private static void castId(LivingEntity caster, String technique, CastEntry entry) {
         // 精确引用取生产注册表，身体从原版伤害桥读，与 GameTest 相同；承接要在请求里写明是承接。起手失败直接让本场失败。
-        var definition = TechniqueFabric.service().registry().findLatest(PREFIX + move).orElseThrow();
+        String move = technique.substring(technique.indexOf(':') + 1);
+        var definition = TechniqueFabric.service().registry().findLatest(technique).orElseThrow();
         var reference = TechniqueReference.newBuilder()
                 .setId(definition.getId())
                 .setVersion(definition.getVersion())

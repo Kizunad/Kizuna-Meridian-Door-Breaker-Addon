@@ -1,14 +1,19 @@
 package dev.kizuna.meridian.doorbreaker.clienttest;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
 import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.screenshot.TestScreenshotOptions;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.CameraType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -93,6 +98,29 @@ final class Stage {
     void camera(CameraType type) {
         context.runOnClient(client -> client.options.setCameraType(type));
         settle();
+    }
+
+    void listen(Consumer<String> heard) {
+        // 每播出一声（音乐和环境声除外）报一行：声音文件、音量、音高、离镜头几格。
+        context.runOnClient(client -> client.getSoundManager().addListener((sound, events, range) -> {
+            if (sound.getSource() == SoundSource.MUSIC || sound.getSource() == SoundSource.AMBIENT) {
+                return;
+            }
+            Vec3 ear = client.getSoundManager().getListenerTransform().position();
+            Vec3 source = new Vec3(sound.getX(), sound.getY(), sound.getZ());
+            double distance = sound.isRelative() ? 0 : ear.distanceTo(source);
+            heard.accept(String.format(Locale.ROOT, "%s\t%.3f\t%.3f\t%.2f",
+                    sound.getSound().getPath(), sound.getVolume(), sound.getPitch(), distance));
+        }));
+    }
+
+    void write(String name, String content) {
+        // 写到本次运行目录里。
+        try {
+            Files.writeString(FabricLoader.getInstance().getGameDir().resolve(name), content);
+        } catch (IOException exception) {
+            throw new UncheckedIOException(exception);
+        }
     }
 
     void settle() {

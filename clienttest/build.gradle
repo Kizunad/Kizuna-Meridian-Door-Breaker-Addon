@@ -12,6 +12,8 @@ dependencies {
     // 施放走功法库的公开服务，身体从原版伤害桥读；类型取组合进来的功法库、Framework 和已构建的 Vanilla-Damage，
     // 运行仍由完整装配装入一次。
     compileOnly('dev.kizuna.meridian.technique:fabric') { transitive = false }
+    // 打击反馈那几段里出手的假玩家来自功法库的 testFixtures，和功法 fabric 同经源码组合解析。
+    implementation(testFixtures('dev.kizuna.meridian.technique:fabric')) { transitive = false }
     compileOnly 'dev.kizuna.meridian.technique:server'
     compileOnly 'dev.kizuna.meridian.technique:shared'
     compileOnly 'local.meridian:server'
@@ -34,6 +36,8 @@ loom {
             vmArg '-Dfabric.client.gametest.modid=meridian_door_breaker_clienttest'
             // -PclienttestEveryTick：每个场景一 tick 拍一张，用来合成视频；不带就是每式十来张的对照图。
             vmArg "-Dmeridian.doorbreaker.clienttest.everyTick=${providers.gradleProperty('clienttestEveryTick').isPresent()}"
+            // -PclienttestScenes=feel：只拍打击反馈那几段（溅血、风痕），镜头在侧面。
+            vmArg "-Dmeridian.doorbreaker.clienttest.scenes=${providers.gradleProperty('clienttestScenes').getOrElse('motion')}"
             programArgs '--width', '1280', '--height', '960'
             // 离线玩家名决定原版默认皮肤：Player991 是 classic 宽臂。
             programArgs '--username', providers.gradleProperty('clienttestUsername').getOrElse('Player991')
