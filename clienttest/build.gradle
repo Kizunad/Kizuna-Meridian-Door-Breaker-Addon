@@ -32,6 +32,8 @@ loom {
             runDir providers.gradleProperty('clienttestRunDir').getOrElse('build/clienttest')
             vmArg '-Dfabric.client.gametest'
             vmArg '-Dfabric.client.gametest.modid=meridian_door_breaker_clienttest'
+            // -PclienttestEveryTick：每个场景一 tick 拍一张，用来合成视频；不带就是每式十来张的对照图。
+            vmArg "-Dmeridian.doorbreaker.clienttest.everyTick=${providers.gradleProperty('clienttestEveryTick').isPresent()}"
             programArgs '--width', '1280', '--height', '960'
             // 离线玩家名决定原版默认皮肤：Player991 是 classic 宽臂。
             programArgs '--username', providers.gradleProperty('clienttestUsername').getOrElse('Player991')

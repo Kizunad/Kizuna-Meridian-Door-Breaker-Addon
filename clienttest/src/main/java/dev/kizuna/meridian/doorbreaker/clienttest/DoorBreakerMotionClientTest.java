@@ -42,6 +42,13 @@ public final class DoorBreakerMotionClientTest implements FabricClientGameTest {
     private static final int QI_DENSITY = 1;
     private static final long MILLIS_PER_TICK = 50;
     private static final int FRAMES_PER_MOVE = 10;
+    /** 逐 tick 连拍（-PclienttestEveryTick）：每个场景从头到尾一 tick 一张，拿去合成 20 帧每秒的视频。 */
+    private static final boolean EVERY_TICK = Boolean.getBoolean("meridian.doorbreaker.clienttest.everyTick");
+    /** 逐 tick 连拍时，一式放完以后多拍这么多 tick，把淡回站立也拍进去。 */
+    private static final int AFTER_MOVE_TICKS = 12;
+    private static final int STAGGER_FILM_TICKS = 34;
+    /** 逐 tick 连拍时每走一格等这么多客户端 tick，让这一格的包都到了再拍。 */
+    private static final int STEP_SETTLE_TICKS = 2;
     /** 一式收势结束后再等这么久，冷却和 PA 的停播都过了再起下一式。 */
     private static final int BETWEEN_MOVES_TICKS = 30;
     /** 承接窗口从前式收势的一半开；多等两 tick 再按，稳在窗口里。 */
@@ -106,6 +113,14 @@ public final class DoorBreakerMotionClientTest implements FabricClientGameTest {
         // 一式从起手到收势，等间隔拍若干张。
         refill(stage);
         int castTicks = ticks(castMillis(phases(stage, move)));
+        if (EVERY_TICK) {
+            stage.command("tick freeze");
+            stage.onServer(server -> cast(player(server), move, CastEntry.AUTO));
+            film(stage, move, 0, castTicks + AFTER_MOVE_TICKS);
+            stage.command("tick unfreeze");
+            stage.pause(BETWEEN_MOVES_TICKS);
+            return;
+        }
         stage.onServer(server -> cast(player(server), move, CastEntry.AUTO));
         int shot = 0;
         for (int frame = 0; frame < FRAMES_PER_MOVE; frame++) {
@@ -123,6 +138,17 @@ public final class DoorBreakerMotionClientTest implements FabricClientGameTest {
         CastPhases cleave = phases(stage, "cleave");
         int untilWindow = ticks(cleave.getWarmupMillis() + cleave.getActiveMillis()
                 + (long) (cleave.getRecoveryMillis() * FOLLOW_UP_RECOVERY_RATIO)) + FOLLOW_UP_MARGIN_TICKS;
+        if (EVERY_TICK) {
+            // 劈门从起手拍到接招那一刻，接上万门一斩后继续拍到它放完，是一段连着的镜头。
+            stage.command("tick freeze");
+            stage.onServer(server -> cast(player(server), "cleave", CastEntry.AUTO));
+            film(stage, "combo", 0, untilWindow);
+            stage.onServer(server -> cast(player(server), "finale", CastEntry.FOLLOW_UP));
+            film(stage, "combo", untilWindow, ticks(castMillis(phases(stage, "finale"))) + AFTER_MOVE_TICKS);
+            stage.command("tick unfreeze");
+            stage.pause(BETWEEN_MOVES_TICKS);
+            return;
+        }
         stage.onServer(server -> cast(player(server), "cleave", CastEntry.AUTO));
         stage.pause(untilWindow - BEFORE_FOLLOW_UP_FRAMES * FRAME_STEP_TICKS);
         for (int frame = 0; frame < BEFORE_FOLLOW_UP_FRAMES; frame++) {
@@ -147,6 +173,9 @@ public final class DoorBreakerMotionClientTest implements FabricClientGameTest {
 
     private static void playerStagger(Stage stage) {
         // 玩家站着挨一次一秒的受击僵直。
+        if (EVERY_TICK) {
+            stage.command("tick freeze");
+        }
         stage.onServer(server -> stagger(player(server)));
         staggerShots(stage, "stagger_player");
     }
@@ -167,11 +196,29 @@ public final class DoorBreakerMotionClientTest implements FabricClientGameTest {
             mob.setYBodyRot(FACING_NORTH);
         });
         stage.look(stage.at(MOB_VIEWER_FEET), stage.at(MOB_VIEW));
+        if (EVERY_TICK) {
+            stage.command("tick freeze");
+        }
         stage.onServer(server -> stagger(vindicator(server, feet)));
         staggerShots(stage, "stagger_vindicator");
     }
 
+    private static void film(Stage stage, String scene, int firstFrame, int ticks) {
+        // 游戏已经冻结：每次只放行一个 tick，等它的包到了再拍，所以一张正好是一个游戏 tick，截图多慢都不会错位。
+        for (int frame = firstFrame + 1; frame <= firstFrame + ticks; frame++) {
+            stage.command("tick step 1");
+            stage.pause(STEP_SETTLE_TICKS);
+            stage.shoot(String.format(Locale.ROOT, "film_%s_%03d", scene, frame));
+        }
+    }
+
     private static void staggerShots(Stage stage, String scene) {
+        if (EVERY_TICK) {
+            film(stage, scene, 0, STAGGER_FILM_TICKS);
+            stage.command("tick unfreeze");
+            stage.pause(BETWEEN_MOVES_TICKS);
+            return;
+        }
         int shot = 0;
         for (int frame = 0; frame < STAGGER_SHOT_TICKS.size(); frame++) {
             int target = STAGGER_SHOT_TICKS.get(frame);
