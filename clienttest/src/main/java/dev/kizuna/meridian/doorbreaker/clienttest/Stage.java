@@ -111,6 +111,15 @@ final class Stage {
         });
     }
 
+    void hideHud() {
+        // 不拍界面的场景把它收回去。
+        context.runOnClient(client -> {
+            if (!client.gui.hud.isHidden()) {
+                client.gui.hud.toggle();
+            }
+        });
+    }
+
     boolean firstPerson() {
         // 现在是不是第一人称镜头。
         return context.computeOnClient(client -> client.options.getCameraType() == CameraType.FIRST_PERSON);

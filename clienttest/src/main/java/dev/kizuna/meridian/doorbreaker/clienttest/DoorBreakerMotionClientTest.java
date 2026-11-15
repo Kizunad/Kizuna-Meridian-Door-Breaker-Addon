@@ -3,14 +3,19 @@ package dev.kizuna.meridian.doorbreaker.clienttest;
 import dev.kizuna.meridian.technique.fabric.TechniqueFabric;
 import dev.kizuna.meridian.technique.fabric.testing.RecordingConnection;
 import dev.kizuna.meridian.technique.fabric.testing.TestPlayers;
+import dev.kizuna.meridian.technique.fabric.world.TechniqueInputBuffer;
 import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.CastEntry;
 import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.CastOutcome;
 import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.CastPhases;
 import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.CastRequest;
+import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.CastStatus;
 import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.TechniqueFailure;
 import dev.kizuna.meridian.technique.protocol.pb.TechniqueMessages.TechniqueReference;
+import dev.kizuna.meridian.technique.server.TechniqueCastTimelines;
 import dev.kizuna.meridian.technique.server.TechniqueService;
+import dev.kizuna.meridian.technique.server.TechniqueState;
 import dev.kizuna.meridian.vanilla.fabric.VanillaDamageFabric;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -115,6 +120,15 @@ public final class DoorBreakerMotionClientTest implements FabricClientGameTest {
     private static final int DRAINED_FILM_TICKS = 15;
     private static final int REFUSED_FILM_TICKS = 25;
     private static final int REFILLED_FILM_TICKS = 15;
+    /** -PclienttestScenes=buffer：按早了的键被记着、到能出手时自己放出来；生物自己接连招。界面开着拍。 */
+    private static final boolean BUFFER_SCENES =
+            "buffer".equals(System.getProperty("meridian.doorbreaker.clienttest.scenes"));
+    /** 依次绑在 1 到 4 槽：飞踹进收招段接破盾，破盾进收招段接劈门，劈门的承接窗口里接万门一斩。 */
+    private static final List<String> BUFFER_MOVES =
+            List.of("meridian_peddler:flying_kick", PREFIX + "hook", PREFIX + "cleave", PREFIX + "finale");
+    /** 每一式都比能出手的那一刻早这么多 tick 按下（0.3 秒，在 0.4 秒的缓冲窗口里）。 */
+    private static final int EARLY_TICKS = 6;
+    private static final int MOB_FOLLOW_UP_FILM_TICKS = 150;
     /** 出招请求的回执，按到达先后。 */
     private static final List<CastOutcome> OBSERVED = new CopyOnWriteArrayList<>();
 
@@ -129,6 +143,11 @@ public final class DoorBreakerMotionClientTest implements FabricClientGameTest {
             }
             if (FLOW_SCENES) {
                 flowScenes(stage);
+                return;
+            }
+            if (BUFFER_SCENES) {
+                bufferScenes(stage);
+                mobFollowUp(stage);
                 return;
             }
             arm(stage);
@@ -207,34 +226,15 @@ public final class DoorBreakerMotionClientTest implements FabricClientGameTest {
     private static void flowScenes(Stage stage) {
         // 连贯：玩家进架势（越肩视角），三式绑在 1、2、3 槽，都是真按键、走战斗界面正式的出招请求。
         // 前一式的施放一结束，紧接着按下一式，必须当场起手；被拒（例如「正运功中」）就让本场失败。
-        arm(stage);
-        PEDDLER_VOLUMES.forEach(volume -> stage.command("meridian technique learn @a " + volume));
-        stage.settle();
-        for (int slot = 0; slot < FLOW_MOVES.size(); slot++) {
-            stage.command("execute as @a run meridian combat slot set " + (slot + 1) + " " + FLOW_MOVES.get(slot));
-        }
-        stage.command("execute as @a run meridian combat slot set " + (FLOW_MOVES.size() + 1) + " " + FLOW_SPARE_MOVE);
-        stage.showHud(FLOW_GUI_SCALE);
-        stage.settle();
-        stage.press(GLFW.GLFW_KEY_R);
-        stage.settle();
-        // 架势视角记在客户端配置里：是第一人称才按 V 换成越肩，运行目录里留着上次的配置也拍得一样。
-        if (stage.firstPerson()) {
-            stage.press(GLFW.GLFW_KEY_V);
-            stage.settle();
-        }
-        if (stage.firstPerson()) {
-            throw new AssertionError("进架势以后换不到越肩视角");
-        }
-        stage.onServer(server -> TechniqueFabric.service().addCastListener(cast -> OBSERVED.add(cast.outcome())));
-        refill(stage);
+        List<String> bound = new ArrayList<>(FLOW_MOVES);
+        bound.add(FLOW_SPARE_MOVE);
+        enterStance(stage, bound);
         stage.command("tick freeze");
         int filmed = 0;
         for (int slot = 0; slot < FLOW_MOVES.size(); slot++) {
             String technique = FLOW_MOVES.get(slot);
             pressSlot(stage, slot);
-            if (OBSERVED.size() != slot + 1
-                    || OBSERVED.getLast().getFailure() != TechniqueFailure.TECHNIQUE_FAILURE_UNSPECIFIED) {
+            if (OBSERVED.getLast().getFailure() != TechniqueFailure.TECHNIQUE_FAILURE_UNSPECIFIED) {
                 throw new AssertionError("第 " + filmed + " 张以后按 " + technique + " 没有当场起手：" + OBSERVED);
             }
             int castTicks = ticks(castMillis(stage.computeOnServer(server ->
@@ -260,12 +260,134 @@ public final class DoorBreakerMotionClientTest implements FabricClientGameTest {
         stage.command("tick unfreeze");
     }
 
+    private static void enterStance(Stage stage, List<String> bound) {
+        // 学全、补满、拿斧子，各式依次绑到 1 号槽起，界面打开，进架势并换成越肩视角；之后的出招回执都记下来。
+        arm(stage);
+        PEDDLER_VOLUMES.forEach(volume -> stage.command("meridian technique learn @a " + volume));
+        stage.settle();
+        for (int slot = 0; slot < bound.size(); slot++) {
+            stage.command("execute as @a run meridian combat slot set " + (slot + 1) + " " + bound.get(slot));
+        }
+        stage.showHud(FLOW_GUI_SCALE);
+        stage.settle();
+        stage.press(GLFW.GLFW_KEY_R);
+        stage.settle();
+        // 架势视角记在客户端配置里：是第一人称才按 V 换成越肩，运行目录里留着上次的配置也拍得一样。
+        if (stage.firstPerson()) {
+            stage.press(GLFW.GLFW_KEY_V);
+            stage.settle();
+        }
+        if (stage.firstPerson()) {
+            throw new AssertionError("进架势以后换不到越肩视角");
+        }
+        stage.onServer(server -> TechniqueFabric.service().addCastListener(cast -> OBSERVED.add(cast.outcome())));
+        refill(stage);
+    }
+
+    private static void bufferScenes(Stage stage) {
+        // 输入缓冲和收招段：每一式都比「能出手」早 0.3 秒按下，当场放不出来、由服务端记着（那一槽描白框），
+        // 到能出手的那一 tick 自己放出来。飞踹、破盾后面接不了别的式，等的是它们进收招段（效果都出完了）；
+        // 劈门后面等的是万门一斩的承接窗口。哪一步没照这样走就让本场失败。
+        enterStance(stage, BUFFER_MOVES);
+        stage.command("tick freeze");
+        pressSlot(stage, 0);
+        if (OBSERVED.getLast().getFailure() != TechniqueFailure.TECHNIQUE_FAILURE_UNSPECIFIED) {
+            throw new AssertionError(BUFFER_MOVES.getFirst() + " 没有起手：" + OBSERVED.getLast());
+        }
+        int filmed = 0;
+        for (int slot = 1; slot < BUFFER_MOVES.size(); slot++) {
+            String technique = BUFFER_MOVES.get(slot);
+            int untilOpen = ticksUntilOpen(stage, technique);
+            film(stage, "buffer", filmed, untilOpen - EARLY_TICKS);
+            filmed += untilOpen - EARLY_TICKS;
+            pressSlot(stage, slot);
+            String held = stage.computeOnServer(server -> TechniqueInputBuffer.buffered(player(server).getUUID()));
+            if (!held.equals(technique)) {
+                throw new AssertionError("早 " + EARLY_TICKS + " tick 按的 " + technique + " 没有被记着：" + OBSERVED.getLast());
+            }
+            System.out.println("DOOR_MOTION 缓冲 第 " + filmed + " 张按下 " + technique + "，被记着（"
+                    + OBSERVED.getLast().getFailure() + "），还差 " + ticksUntilOpen(stage, technique) + " tick 能出手");
+            film(stage, "buffer", filmed, EARLY_TICKS + 1);
+            filmed += EARLY_TICKS + 1;
+            String active = stage.computeOnServer(server -> status(player(server)).getTechniqueId());
+            if (!active.equals(technique)) {
+                throw new AssertionError("到了能出手的时刻，记着的 " + technique + " 没有放出来，还在放 " + active);
+            }
+            System.out.println("DOOR_MOTION 缓冲 第 " + filmed + " 张时 " + technique + " 已经自己放出来了");
+        }
+        int rest = stage.computeOnServer(server -> {
+            CastStatus status = status(player(server));
+            return ticks(status.getRecoveryEndMillis() - status.getElapsedMillis());
+        });
+        film(stage, "buffer", filmed, rest + AFTER_MOVE_TICKS);
+        stage.command("tick unfreeze");
+        stage.pause(BETWEEN_MOVES_TICKS);
+    }
+
+    private static int ticksUntilOpen(Stage stage, String technique) {
+        // 正在放的这一式，还要多少 tick 才轮得到 technique 出手：能接的看承接窗口什么时候开，接不了的看收招段什么时候开始。
+        return stage.computeOnServer(server -> {
+            CastStatus status = status(player(server));
+            long opens = status.getFollowUpsList().stream()
+                    .filter(hint -> hint.getTechniqueId().equals(technique))
+                    .mapToLong(hint -> hint.getOpenMillis())
+                    .findFirst().orElse(status.getFreeMillis());
+            return Math.toIntExact(Math.ceilDiv(opens - status.getElapsedMillis(), MILLIS_PER_TICK));
+        });
+    }
+
+    private static CastStatus status(LivingEntity caster) {
+        // 这个实体此刻的施放时间轴，和服务端发给施放者本人的是同一份算法。
+        var observation = TechniqueFabric.service().observe(caster.getUUID()).orElseThrow();
+        return TechniqueCastTimelines.status(TechniqueFabric.service().registry(),
+                TechniqueState.read(observation.body()), observation.body().settledAt().elapsedMillis()).build();
+    }
+
+    private static void mobFollowUp(Stage stage) {
+        // 生物接连招：真炁卫道士会下卷，对着一只铁傀儡（挨得住两下）放劈门；承接窗口一开，它的大脑自己接万门一斩。
+        // 劈门是替它起的手，万门一斩是它自己选的；没接上就让本场失败。本机玩家当旁观者，镜头架在侧面，界面收起来。
+        stage.press(GLFW.GLFW_KEY_R);
+        stage.settle();
+        stage.command("gamemode spectator @a");
+        Vec3 camera = stage.at(SIDE_CAMERA);
+        stage.look(camera.subtract(0, CAMERA_EYE, 0), camera.add(-1, CAMERA_DROP, 0));
+        stage.camera(CameraType.FIRST_PERSON);
+        stage.hideHud();
+        target(stage, "minecraft:iron_golem", WEAPON_REACH);
+        Vec3 feet = stage.at(PLAYER_FEET);
+        // 先冻结再生：它一落地就会自己朝铁傀儡出手，等不到替它起劈门。
+        stage.command("tick freeze");
+        stage.command(String.format(Locale.ROOT, "meridian humanoid spawn minecraft:vindicator %s %.2f %.2f %.2f",
+                TRUE_QI, feet.x, feet.y, feet.z));
+        stage.settle();
+        UUID mobId = stage.computeOnServer(server -> {
+            Vindicator mob = vindicator(server, feet);
+            var golem = server.overworld().getEntitiesOfClass(Mob.class, MOB_BOX.inflate(4).move(feet),
+                    other -> other != mob).getFirst();
+            TechniqueFabric.service().learn(mob.getUUID(), PREFIX + "lower");
+            mob.setTarget(golem);
+            castId(mob, PREFIX + "cleave", CastEntry.AUTO);
+            return mob.getUUID();
+        });
+        film(stage, "mob_follow_up", 0, MOB_FOLLOW_UP_FILM_TICKS);
+        boolean followed = stage.computeOnServer(server -> {
+            var progress = TechniqueState.read(TechniqueFabric.service().observe(mobId).orElseThrow().body());
+            return progress.getLastCast().getTechnique().getId().equals(PREFIX + "finale")
+                    || progress.getActiveCast().getRequest().getTechnique().getId().equals(PREFIX + "finale");
+        });
+        if (!followed) {
+            throw new AssertionError("卫道士放完劈门没有自己接万门一斩");
+        }
+        stage.command("tick unfreeze");
+    }
+
     private static void pressSlot(Stage stage, int slot) {
         // 按一下原版快捷栏的数字键：架势里它就是出招键。等两 tick 让请求到服务端、回执回来。
+        // 被记着的按键服务端每 tick 替玩家再试一次，回执不止一条。
         int before = OBSERVED.size();
         stage.press(GLFW.GLFW_KEY_1 + slot);
         stage.pause(STEP_SETTLE_TICKS);
-        if (OBSERVED.size() != before + 1) {
+        if (OBSERVED.size() == before) {
             throw new AssertionError("按第 " + (slot + 1) + " 槽以后服务端没有收到出招请求");
         }
     }
