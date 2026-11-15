@@ -34,6 +34,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.lwjgl.glfw.GLFW;
 
 /**
  * 破门斩动作连拍，给人看：玩家手持铁斧，经功法库公开入口施放，第三人称正面每隔几 tick 拍一张。
@@ -102,6 +103,20 @@ public final class DoorBreakerMotionClientTest implements FabricClientGameTest {
     private static final int FIRST_PERSON_PITCH = 10;
     private static final int MOB_ATTACK_FILM_TICKS = 160;
     private static final List<Integer> PUNCH_TICKS = List.of(2, 16);
+    /** -PclienttestScenes=flow：进架势真按键连出三式，再把真元清空看战斗槽变灰。界面开着拍。 */
+    private static final boolean FLOW_SCENES =
+            "flow".equals(System.getProperty("meridian.doorbreaker.clienttest.scenes"));
+    /** 依次绑在 1、2、3 槽、连着按的三式。 */
+    private static final List<String> FLOW_MOVES =
+            List.of("meridian_peddler:flying_kick", PREFIX + "hook", "meridian_peddler:snap_kick");
+    /** 绑在第 4 槽、一直没放过的一式：真元清空以后按它，被拒只能是因为真元。 */
+    private static final String FLOW_SPARE_MOVE = PREFIX + "sweep";
+    private static final int FLOW_GUI_SCALE = 2;
+    private static final int DRAINED_FILM_TICKS = 15;
+    private static final int REFUSED_FILM_TICKS = 25;
+    private static final int REFILLED_FILM_TICKS = 15;
+    /** 出招请求的回执，按到达先后。 */
+    private static final List<CastOutcome> OBSERVED = new CopyOnWriteArrayList<>();
 
     @Override
     public void runTest(ClientGameTestContext context) {
@@ -110,6 +125,10 @@ public final class DoorBreakerMotionClientTest implements FabricClientGameTest {
             Stage stage = Stage.prepare(context, world);
             if (FEEL_SCENES) {
                 feelScenes(stage);
+                return;
+            }
+            if (FLOW_SCENES) {
+                flowScenes(stage);
                 return;
             }
             arm(stage);
@@ -183,6 +202,72 @@ public final class DoorBreakerMotionClientTest implements FabricClientGameTest {
         filmMobAttack(stage, "feel_mob_attack");
         filmFirstPerson(stage, "feel_first_person");
         stage.write(SOUND_RECORD, String.join("", HEARD));
+    }
+
+    private static void flowScenes(Stage stage) {
+        // 连贯：玩家进架势（越肩视角），三式绑在 1、2、3 槽，都是真按键、走战斗界面正式的出招请求。
+        // 前一式的施放一结束，紧接着按下一式，必须当场起手；被拒（例如「正运功中」）就让本场失败。
+        arm(stage);
+        PEDDLER_VOLUMES.forEach(volume -> stage.command("meridian technique learn @a " + volume));
+        stage.settle();
+        for (int slot = 0; slot < FLOW_MOVES.size(); slot++) {
+            stage.command("execute as @a run meridian combat slot set " + (slot + 1) + " " + FLOW_MOVES.get(slot));
+        }
+        stage.command("execute as @a run meridian combat slot set " + (FLOW_MOVES.size() + 1) + " " + FLOW_SPARE_MOVE);
+        stage.showHud(FLOW_GUI_SCALE);
+        stage.settle();
+        stage.press(GLFW.GLFW_KEY_R);
+        stage.settle();
+        // 架势视角记在客户端配置里：是第一人称才按 V 换成越肩，运行目录里留着上次的配置也拍得一样。
+        if (stage.firstPerson()) {
+            stage.press(GLFW.GLFW_KEY_V);
+            stage.settle();
+        }
+        if (stage.firstPerson()) {
+            throw new AssertionError("进架势以后换不到越肩视角");
+        }
+        stage.onServer(server -> TechniqueFabric.service().addCastListener(cast -> OBSERVED.add(cast.outcome())));
+        refill(stage);
+        stage.command("tick freeze");
+        int filmed = 0;
+        for (int slot = 0; slot < FLOW_MOVES.size(); slot++) {
+            String technique = FLOW_MOVES.get(slot);
+            pressSlot(stage, slot);
+            if (OBSERVED.size() != slot + 1
+                    || OBSERVED.getLast().getFailure() != TechniqueFailure.TECHNIQUE_FAILURE_UNSPECIFIED) {
+                throw new AssertionError("第 " + filmed + " 张以后按 " + technique + " 没有当场起手：" + OBSERVED);
+            }
+            int castTicks = ticks(castMillis(stage.computeOnServer(server ->
+                    TechniqueFabric.service().registry().findLatest(technique).orElseThrow().getPhases())));
+            System.out.println("DOOR_MOTION 连招 " + technique + " 第 " + (filmed + 1) + " 张起手，占 " + castTicks + " tick");
+            film(stage, "flow", filmed, castTicks);
+            filmed += castTicks;
+        }
+        // 真元清空：槽里的图标变灰、右下角出真元角标；这时按没在冷却的第 4 槽，动作栏说原因；补满以后亮回来。
+        stage.command("meridian qi set @a 0 all lumen " + QI_DENSITY);
+        film(stage, "flow", filmed, DRAINED_FILM_TICKS);
+        filmed += DRAINED_FILM_TICKS;
+        pressSlot(stage, FLOW_MOVES.size());
+        if (OBSERVED.getLast().getFailure() == TechniqueFailure.TECHNIQUE_FAILURE_UNSPECIFIED) {
+            throw new AssertionError("真元清空以后 " + FLOW_SPARE_MOVE + " 还放得出来");
+        }
+        System.out.println("DOOR_MOTION 真元清空后按 " + FLOW_SPARE_MOVE + " 被拒：" + OBSERVED.getLast().getFailure()
+                + " " + OBSERVED.getLast().getReason());
+        film(stage, "flow", filmed, REFUSED_FILM_TICKS);
+        filmed += REFUSED_FILM_TICKS;
+        stage.command("meridian qi set @a " + PLAYER_QI + " all lumen " + QI_DENSITY);
+        film(stage, "flow", filmed, REFILLED_FILM_TICKS);
+        stage.command("tick unfreeze");
+    }
+
+    private static void pressSlot(Stage stage, int slot) {
+        // 按一下原版快捷栏的数字键：架势里它就是出招键。等两 tick 让请求到服务端、回执回来。
+        int before = OBSERVED.size();
+        stage.press(GLFW.GLFW_KEY_1 + slot);
+        stage.pause(STEP_SETTLE_TICKS);
+        if (OBSERVED.size() != before + 1) {
+            throw new AssertionError("按第 " + (slot + 1) + " 槽以后服务端没有收到出招请求");
+        }
     }
 
     private static void heard(String sound) {

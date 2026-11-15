@@ -100,6 +100,27 @@ final class Stage {
         settle();
     }
 
+    void showHud(int scale) {
+        // 场地默认把界面藏了；要拍战斗槽的场景再打开，界面缩放定死，免得挡住人。
+        context.runOnClient(client -> {
+            if (client.gui.hud.isHidden()) {
+                client.gui.hud.toggle();
+            }
+            client.options.guiScale().set(scale);
+            client.resizeGui();
+        });
+    }
+
+    boolean firstPerson() {
+        // 现在是不是第一人称镜头。
+        return context.computeOnClient(client -> client.options.getCameraType() == CameraType.FIRST_PERSON);
+    }
+
+    void press(int key) {
+        // 真按一下键盘上的键（GLFW 键码），走客户端正式的按键处理。
+        context.getInput().pressKey(key);
+    }
+
     void listen(Consumer<String> heard) {
         // 每播出一声（音乐和环境声除外）报一行：声音文件、音量、音高、离镜头几格。
         context.runOnClient(client -> client.getSoundManager().addListener((sound, events, range) -> {

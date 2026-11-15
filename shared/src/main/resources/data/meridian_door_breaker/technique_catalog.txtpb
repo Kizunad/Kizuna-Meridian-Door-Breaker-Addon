@@ -497,7 +497,7 @@ definitions {
   follow_up {
     transitions {
       previous { id: "meridian_door_breaker:close" version: 1 }
-      recovery_start_ratio { value: 0.5 unit: RATIO }
+      recovery_start_ratio { value: 0.5853 unit: RATIO }
       after_recovery_millis: 500 start_millis: 200
     }
   }
@@ -532,7 +532,7 @@ definitions {
       distribution: EVEN
     }
   }
-  phases { warmup_millis: 1050 active_millis: 0 recovery_millis: 2450 interruptible_by_damage: false }
+  phases { warmup_millis: 1050 active_millis: 0 recovery_millis: 1900 interruptible_by_damage: false }
   cooldown_millis: 5000
   effects { at_millis: 0 presentation { id: "meridian_door_breaker:door_breaker_hook" duration: UNTIL_RECOVERY_END start_millis: 0 } }
   effects {
@@ -633,7 +633,7 @@ definitions {
       distribution: EVEN
     }
   }
-  phases { warmup_millis: 1700 active_millis: 350 recovery_millis: 2300 interruptible_by_damage: true }
+  phases { warmup_millis: 1700 active_millis: 350 recovery_millis: 1550 interruptible_by_damage: true }
   cooldown_millis: 5000
   effects { at_millis: 0 presentation { id: "meridian_door_breaker:door_breaker_sweep" duration: UNTIL_RECOVERY_END start_millis: 0 } }
   effects {
@@ -757,7 +757,7 @@ definitions {
       power { value: 100 unit: WATT } duration { value: 0.6 unit: SECOND }
     }
   }
-  phases { warmup_millis: 450 active_millis: 1850 recovery_millis: 2400 interruptible_by_damage: false }
+  phases { warmup_millis: 450 active_millis: 1850 recovery_millis: 2050 interruptible_by_damage: false }
   cooldown_millis: 4000
   effects { at_millis: 0 presentation { id: "meridian_door_breaker:door_breaker_close" duration: UNTIL_RECOVERY_END start_millis: 0 } }
   effects {
@@ -856,7 +856,7 @@ definitions {
       power { value: 100 unit: WATT } duration { value: 0.8 unit: SECOND }
     }
   }
-  phases { warmup_millis: 800 active_millis: 3450 recovery_millis: 3000 interruptible_by_damage: true }
+  phases { warmup_millis: 800 active_millis: 3450 recovery_millis: 2450 interruptible_by_damage: true }
   cooldown_millis: 8000
   effects { at_millis: 0 presentation { id: "meridian_door_breaker:door_breaker_chain" duration: UNTIL_RECOVERY_END start_millis: 0 } }
   effects {
@@ -1143,7 +1143,7 @@ definitions {
     }
     transitions {
       previous { id: "meridian_door_breaker:chain" version: 1 }
-      recovery_start_ratio { value: 0.5 unit: RATIO }
+      recovery_start_ratio { value: 0.6122 unit: RATIO }
       after_recovery_millis: 500 start_millis: 600
     }
   }
