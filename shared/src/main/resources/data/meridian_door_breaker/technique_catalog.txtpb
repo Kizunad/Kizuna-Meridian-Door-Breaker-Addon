@@ -1,7 +1,7 @@
 # 功法目录清单，schema_version 同时标识清单格式。
 schema_version: 1
 namespace: "meridian_door_breaker"
-binding_templates { id: "human:adult" version: 1 }
+binding_template_groups: "human:humanoid"
 
 books {
   id: "meridian_door_breaker:door_breaker"

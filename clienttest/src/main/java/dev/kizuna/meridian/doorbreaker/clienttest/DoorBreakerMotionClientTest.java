@@ -339,8 +339,9 @@ public final class DoorBreakerMotionClientTest implements FabricClientGameTest {
     private static CastStatus status(LivingEntity caster) {
         // 这个实体此刻的施放时间轴，和服务端发给施放者本人的是同一份算法。
         var observation = TechniqueFabric.service().observe(caster.getUUID()).orElseThrow();
-        return TechniqueCastTimelines.status(TechniqueFabric.service().registry(),
-                TechniqueState.read(observation.body()), observation.body().settledAt().elapsedMillis()).build();
+        var body = observation.body();
+        return TechniqueCastTimelines.status(TechniqueFabric.service().registry(), body,
+                body.settledAt().elapsedMillis()).build();
     }
 
     private static void mobFollowUp(Stage stage) {
