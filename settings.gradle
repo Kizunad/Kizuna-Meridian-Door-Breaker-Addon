@@ -21,4 +21,7 @@ kizunaWorkspace.includeSource('technique', [
         server: 'dev.kizuna.meridian.technique:server',
         shared: 'dev.kizuna.meridian.technique:shared'
 ])
-kizunaWorkspace.includeSource('human', [server: 'dev.kizuna.meridian.human:server'])
+kizunaWorkspace.includeSource('human', [
+        server: 'dev.kizuna.meridian.human:server',
+        shared: 'dev.kizuna.meridian.human:shared'
+])
