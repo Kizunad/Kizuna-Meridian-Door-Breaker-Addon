@@ -3,7 +3,13 @@
   "id": "meridian_door_breaker",
   "version": "${version}",
   "name": "破门斩",
-  "description": "一书三卷八式的破门斩功法目录、伤害类型与标签数据",
+  "contact": {
+    "homepage": "https://github.com/Kizunad/Kizuna-Meridian-Door-Breaker-Addon",
+    "sources": "https://github.com/Kizunad/Kizuna-Meridian-Door-Breaker-Addon",
+    "issues": "https://github.com/Kizunad/Kizuna-Meridian-Door-Breaker-Addon/issues"
+  },
+  "icon": "assets/meridian_door_breaker/icon.png",
+  "description": "Study eight saber forms across the three volumes of Door Breaker.\n研习破门斩三卷，学会八式刀法。",
   "authors": ["Kizunad"],
   "license": "PolyForm-Noncommercial-1.0.0",
   "environment": "*",
